@@ -1,2 +1,2 @@
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://weather-app-backend-0es7.onrender.com/api/weather';
-export const API_BASE = import.meta.env.VITE_API_BASE || "https://weather-app-backend-0es7.onrender.com/";
+export const API_BASE = import.meta.env.VITE_API_BASE || "https://weather-app-backend-0es7.onrender.com";
