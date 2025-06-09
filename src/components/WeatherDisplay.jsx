@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
-import { getClothingSuggestion } from "../api/weatherApi";
+// import { getClothingSuggestion } from "../api/weatherApi";
 
 const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
   if (error && !fromHistory) {
@@ -16,7 +16,7 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
     );
   }
 
-  const [suggestion, setSuggestion] = useState("");
+  // const [suggestion, setSuggestion] = useState("");
 
   const getWeatherAlerts = (temp, description) => {
     const alerts = [];
@@ -43,12 +43,14 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
         toast.custom(
           (t) => (
             <div
-              className={`relative flex items-start gap-3 text-white bg-gray-800 p-3 rounded-lg shadow-lg w-full sm:w-[300px] ${
-                t.visible ? "animate-enter" : "animate-leave"
-              }`}
+              className={`relative flex items-start gap-3 text-white bg-gray-800 p-3 rounded-lg shadow-lg 
+        w-[90vw] max-w-sm sm:max-w-md md:max-w-lg
+        ${t.visible ? "animate-enter" : "animate-leave"}`}
             >
               <div className="text-red-400 text-xl">🚨</div>
-              <div className="flex-1 text-sm">{msg}</div>
+              <div className="flex-1 text-sm sm:text-base break-words">
+                {msg}
+              </div>
               <button
                 onClick={() => toast.dismiss(t.id)}
                 className="text-gray-400 hover:text-red-500 transition hover:cursor-pointer"
@@ -63,18 +65,18 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
     });
   }, [weather]);
 
-  useEffect(() => {
-    const fetchSuggestion = async () => {
-      if (weather?.temperature && weather?.description) {
-        const response = await getClothingSuggestion(
-          weather.temperature,
-          weather.description
-        );
-        setSuggestion(response);
-      }
-    };
-    fetchSuggestion();
-  }, [weather]);
+  // useEffect(() => {
+  //   const fetchSuggestion = async () => {
+  //     if (weather?.temperature && weather?.description) {
+  //       const response = await getClothingSuggestion(
+  //         weather.temperature,
+  //         weather.description
+  //       );
+  //       setSuggestion(response);
+  //     }
+  //   };
+  //   fetchSuggestion();
+  // }, [weather]);
 
   return (
     <div className="relative w-full max-w-screen-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto bg-white/20 backdrop-blur-2xl border border-white/30 p-4 sm:p-6 rounded-2xl shadow-xl mt-6 text-white text-center transition duration-300 hover:scale-[1.02]">
@@ -114,7 +116,7 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
         </p>
       </div>
 
-      {suggestion && (
+      {/* {suggestion && (
         <div className="mt-6 bg-white/10 border border-white/20 p-3 sm:p-4 rounded-lg shadow-md">
           <p className="text-base sm:text-lg font-semibold text-white">
             🧠 Suggestion:
@@ -123,7 +125,7 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
             {suggestion}
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
