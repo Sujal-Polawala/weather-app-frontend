@@ -76,10 +76,10 @@ weather-app-frontend/
 ```
 
 ## 📸 Live Demo
-- Frontend (User View): https://weather-app-frontend-taupe.vercel.app
+Frontend (User View): https://weather-app-frontend-taupe.vercel.app
 
 ## 🤝 Author
-- Developed by Sujal Polawala
+Developed by Sujal Polawala
 
 ## 📄 License
 This project is licensed under the MIT License.
