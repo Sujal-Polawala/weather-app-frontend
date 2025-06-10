@@ -1,12 +1,85 @@
-# React + Vite
+# 🌤️ Weather App Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive weather forecast application built using **React.js**, **Tailwind CSS**, and **Axios**, integrated with a Flask-powered AI backend for clothing suggestions based on live weather data.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔍 Features
 
-## Expanding the ESLint configuration
+- Search weather by city name using OpenWeatherMap API
+- View real-time temperature, humidity, wind speed, and weather description
+- AI-generated clothing suggestions powered by a Flask backend using HuggingFace Transformers
+- Responsive design using Tailwind CSS
+- Clean UI and easy-to-use interface
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🧠 AI Suggestion Feature
+
+When the user searches for a city’s weather, the app also sends the temperature and description to the backend. A Python-based AI model generates appropriate clothing suggestions based on current conditions and stores them in MongoDB to avoid redundant generation.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React.js, Tailwind CSS, Axios
+- **Backend:** Flask, Transformers (HuggingFace), MongoDB
+- **API:** OpenWeatherMap, Custom Flask AI API
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js and npm installed
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Sujal-Polawala/weather-app-frontend.git
+cd weather-app-frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a .env file in the root directory and add your OpenWeatherMap API key:
+
+```ini
+VITE_WEATHER_API_KEY=your_openweather_api_key
+VITE_AI_SUGGEST_API=https://your-backend-api.com/api/suggest
+```
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+## 📁 Folder Structure
+```bash
+weather-app-frontend/
+├── public/
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── services/        # API service functions
+│   ├── App.jsx
+│   └── main.jsx
+├── .env
+└── tailwind.config.js
+```
+
+## 📸 Live Demo
+- Frontend (User View): https://weather-app-frontend-taupe.vercel.app
+
+## 🤝 Author
+- Developed by Sujal Polawala
+
+## 📄 License
+This project is licensed under the MIT License.
