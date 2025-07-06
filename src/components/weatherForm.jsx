@@ -22,7 +22,6 @@ const WeatherForm = ({
     const timer = setTimeout(() => {
       if (city.trim().length > 1) {
         getCitySuggestions(city).then(setSuggestions).catch(console.error);
-        console.log(city);
       } else {
         setSuggestions([]);
       }
@@ -161,45 +160,48 @@ const WeatherForm = ({
 
         {/* Suggestions Dropdown */}
         {isFocused && (suggestions.length > 0 || history.length > 0) && (
-          <div className="absolute top-full left-0 right-0 mt-4 z-50 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl max-h-80 overflow-y-auto">
-            {suggestions.map((sugg, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleSuggestionClick(sugg)}
-                className="px-6 py-4 hover:bg-white/20 hover:text-white cursor-pointer text-white border-b border-white/10 last:border-b-0 transition-all duration-200"
-              >
-                <div className="flex items-center gap-3">
-                  <FaMapMarkerAlt className="text-white/60" size={16} />
+          <div
+            className="absolute left-0 right-0 mt-2 z-50"
+            style={{ minWidth: '100%' }}
+          >
+            <div
+              className="bg-white/90 border border-gray-200 rounded-2xl shadow-2xl max-h-72 overflow-y-auto divide-y divide-gray-100"
+            >
+              {suggestions.map((sugg, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleSuggestionClick(sugg)}
+                  className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-blue-100/80 transition-all text-gray-800"
+                >
+                  <FaMapMarkerAlt className="text-blue-400" size={18} />
                   <div>
-                    <span className="block font-semibold text-lg">
+                    <span className="block font-semibold text-base">
                       {sugg.split(",")[0]}
                     </span>
-                    <span className="text-sm text-white/70">
+                    <span className="text-xs text-gray-500">
                       {sugg.split(",").slice(1).join(",")}
                     </span>
                   </div>
                 </div>
-              </div>
-            ))}
-            
-            {city.trim().length > 1 && history.length > 0 && (
-              <div className="bg-white/10 px-6 py-3 text-sm text-white/80 font-semibold border-t border-white/10">
-                🔍 Recently Searched
-              </div>
-            )}
-            
-            {history.map((item, idx) => (
-              <div
-                key={`h-${idx}`}
-                onClick={() => handleSuggestionClick(item.city)}
-                className="px-6 py-3 hover:bg-white/20 cursor-pointer text-white border-b border-white/10 last:border-b-0 transition-all duration-200"
-              >
-                <div className="flex items-center gap-3">
-                  <FaMapMarkerAlt className="text-white/60" size={14} />
-                  <span className="font-medium">{item.city}</span>
+              ))}
+
+              {city.trim().length > 1 && history.length > 0 && (
+                <div className="bg-gray-50 px-5 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10">
+                  Recently Searched
                 </div>
-              </div>
-            ))}
+              )}
+
+              {history.map((item, idx) => (
+                <div
+                  key={`h-${idx}`}
+                  onClick={() => handleSuggestionClick(item.city)}
+                  className="flex items-center gap-3 px-5 py-2 cursor-pointer hover:bg-blue-50 transition-all text-gray-700"
+                >
+                  <FaMapMarkerAlt className="text-gray-400" size={15} />
+                  <span className="font-medium text-sm">{item.city}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </form>
