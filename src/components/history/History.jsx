@@ -181,7 +181,7 @@ const History = ({
               {history.length > 5 && (
                 <div className="text-center pt-4">
                   <button
-                    className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+                    className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
                   >
                     {showAll ? "View Less" : "View More"}

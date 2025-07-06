@@ -84,14 +84,14 @@ const Home = () => {
     <div className="min-h-screen w-full px-4 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-16">
       <div className="w-full max-w-6xl mx-auto space-y-12">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        {/* <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
             🌤️ Weather App
           </h1>
           <p className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto">
             Get real-time weather information for any city around the world
           </p>
-        </div>
+        </div> */}
 
         {/* Search Form */}
         <div className="mb-12">
