@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaThermometerHalf, FaWind, FaTint, FaSun, FaMoon } from "react-icons/fa";
+import { WiHumidity, WiStrongWind, WiThermometer } from "react-icons/wi";
 import toast from "react-hot-toast";
 // import { getClothingSuggestion } from "../api/weatherApi";
 
 const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
   if (error && !fromHistory) {
-    return <p className="text-center text-red-500 mt-4 text-sm">{error}</p>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="bg-red-500/20 backdrop-blur-lg border border-red-500/30 rounded-2xl p-6 text-center">
+          <p className="text-red-300 text-lg font-medium">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   if (!weather) {
     return (
-      <p className="text-center text-gray-400 mt-4 text-sm">
-        No weather data available
-      </p>
+      <div className="flex items-center justify-center p-8">
+        <div className="bg-gray-500/20 backdrop-blur-lg border border-gray-500/30 rounded-2xl p-6 text-center">
+          <p className="text-gray-300 text-lg font-medium">No weather data available</p>
+        </div>
+      </div>
     );
   }
 
@@ -43,17 +52,17 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
         toast.custom(
           (t) => (
             <div
-              className={`relative flex items-start gap-3 text-white bg-gray-800 p-3 rounded-lg shadow-lg 
-        w-[90vw] max-w-sm sm:max-w-md md:max-w-lg
+              className={`relative flex items-start gap-3 text-white bg-gradient-to-r from-red-500/90 to-orange-500/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl 
+        w-[90vw] max-w-sm sm:max-w-md md:max-w-lg border border-red-400/30
         ${t.visible ? "animate-enter" : "animate-leave"}`}
             >
-              <div className="text-red-400 text-xl">🚨</div>
-              <div className="flex-1 text-sm sm:text-base break-words">
+              <div className="text-white text-xl">🚨</div>
+              <div className="flex-1 text-sm sm:text-base break-words font-medium">
                 {msg}
               </div>
               <button
                 onClick={() => toast.dismiss(t.id)}
-                className="text-gray-400 hover:text-red-500 transition hover:cursor-pointer"
+                className="text-white/80 hover:text-white transition hover:cursor-pointer"
               >
                 <FaTimes />
               </button>
@@ -78,54 +87,123 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
   //   fetchSuggestion();
   // }, [weather]);
 
+  const getWeatherIcon = (description) => {
+    const desc = description.toLowerCase();
+    if (desc.includes("clear")) return "☀️";
+    if (desc.includes("cloud")) return "☁️";
+    if (desc.includes("rain")) return "🌧️";
+    if (desc.includes("snow")) return "❄️";
+    if (desc.includes("storm")) return "⛈️";
+    if (desc.includes("fog") || desc.includes("mist")) return "🌫️";
+    return "🌤️";
+  };
+
   return (
-    <div className="relative w-full max-w-screen-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto bg-white/20 backdrop-blur-2xl border border-white/30 p-4 sm:p-6 rounded-2xl shadow-xl mt-6 text-white text-center transition duration-300 hover:scale-[1.02]">
-      {fromHistory && (
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
-          <button
-            onClick={onClose}
-            className="text-gray-300 hover:text-red-500 transition focus:outline-none hover:cursor-pointer"
-            aria-label="Close weather display"
-          >
-            <FaTimes size={20} />
-          </button>
+    <div className="relative w-full max-w-screen-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
+      {/* Main Weather Card */}
+      <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
+        {fromHistory && (
+          <div className="absolute top-4 right-4 z-10">
+            <button
+              onClick={onClose}
+              className="bg-white/10 backdrop-blur-lg border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 focus:outline-none hover:cursor-pointer p-2 rounded-full"
+              aria-label="Close weather display"
+            >
+              <FaTimes size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Location Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-white drop-shadow-lg mb-2">
+            {weather.city}
+          </h2>
+          <p className="text-white/80 text-lg sm:text-xl">
+            {weather.state ? `${weather.state}, ` : ""}{weather.country}
+          </p>
         </div>
-      )}
 
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide drop-shadow-md">
-        📍 {weather.city}, {weather.state ? `${weather.state}, ` : ""}
-        {weather.country}
-      </h2>
+        {/* Main Weather Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Temperature Section */}
+          <div className="text-center">
+            <div className="text-6xl sm:text-7xl md:text-8xl mb-4">
+              {getWeatherIcon(weather.description)}
+            </div>
+            <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2">
+              {weather.temperature}°C
+            </div>
+            <p className="text-white/70 text-lg">
+              Feels like {weather.feels_like}°C
+            </p>
+            <p className="text-white/80 text-xl font-medium mt-2">
+              {weather.description}
+            </p>
+          </div>
 
-      <div className="mt-4 space-y-1 text-sm sm:text-base md:text-lg">
-        <p>
-          🌡️ <span className="font-semibold">{weather.temperature}°C</span>{" "}
-          (Feels like {weather.feels_like}°C)
-        </p>
-        <p>🌤️ {weather.description}</p>
-        <p>
-          🌬️ Wind: {weather.wind_speed} m/s, {weather.wind_deg}°
-        </p>
-        <p>
-          💧 Humidity: {weather.humidity}% | ⬇️ Min: {weather.temp_min}°C | ⬆️
-          Max: {weather.temp_max}°C
-        </p>
-        <p>
-          🌅 Sunrise: {new Date(weather.sunrise * 1000).toLocaleTimeString()} |
-          🌇 Sunset: {new Date(weather.sunset * 1000).toLocaleTimeString()}
-        </p>
+          {/* Weather Details */}
+          <div className="space-y-4">
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
+              <div className="flex items-center justify-between text-white">
+                <div className="flex items-center gap-3">
+                  <WiThermometer className="text-2xl text-orange-300" />
+                  <span className="font-medium">Temperature Range</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-white/70">Min: {weather.temp_min}°C</div>
+                  <div className="text-sm text-white/70">Max: {weather.temp_max}°C</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
+              <div className="flex items-center justify-between text-white">
+                <div className="flex items-center gap-3">
+                  <WiStrongWind className="text-2xl text-blue-300" />
+                  <span className="font-medium">Wind</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-white/70">{weather.wind_speed} m/s</div>
+                  <div className="text-sm text-white/70">{weather.wind_deg}°</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
+              <div className="flex items-center justify-between text-white">
+                <div className="flex items-center gap-3">
+                  <WiHumidity className="text-2xl text-cyan-300" />
+                  <span className="font-medium">Humidity</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-white/70">{weather.humidity}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sun Timings */}
+        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-lg border border-yellow-400/30 rounded-2xl p-6">
+          <div className="grid grid-cols-2 gap-6 text-center">
+            <div className="flex flex-col items-center">
+              <FaSun className="text-3xl text-yellow-300 mb-2" />
+              <span className="text-white/80 text-sm font-medium">Sunrise</span>
+              <span className="text-white text-lg font-semibold">
+                {new Date(weather.sunrise * 1000).toLocaleTimeString()}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <FaMoon className="text-3xl text-blue-300 mb-2" />
+              <span className="text-white/80 text-sm font-medium">Sunset</span>
+              <span className="text-white text-lg font-semibold">
+                {new Date(weather.sunset * 1000).toLocaleTimeString()}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* {suggestion && (
-        <div className="mt-6 bg-white/10 border border-white/20 p-3 sm:p-4 rounded-lg shadow-md">
-          <p className="text-base sm:text-lg font-semibold text-white">
-            🧠 Suggestion:
-          </p>
-          <p className="text-lg sm:text-xl font-bold italic mt-1">
-            {suggestion}
-          </p>
-        </div>
-      )} */}
     </div>
   );
 };

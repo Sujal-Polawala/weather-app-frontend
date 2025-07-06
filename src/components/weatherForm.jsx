@@ -1,7 +1,7 @@
 import { React, useState, useEffect, useRef } from "react";
 import { fetchWeather, saveWeatherHistory } from "../api/weatherApi.jsx";
 import { getCitySuggestions } from "../api/locationApi.jsx";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaMapMarkerAlt, FaMicrophone } from "react-icons/fa";
 import VoiceSearchButton from "./VoiceSearchButton.jsx";
 import toast from "react-hot-toast";
 
@@ -15,7 +15,7 @@ const WeatherForm = ({
 }) => {
   const [city, setCity] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [isFocused, setIsFocused] = useState(false); // Track focus state
+  const [isFocused, setIsFocused] = useState(false);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const WeatherForm = ({
       } else {
         setSuggestions([]);
       }
-    }, 300); // debounce
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [city]);
@@ -71,7 +71,6 @@ const WeatherForm = ({
       setWeather(data);
       setError(null);
 
-      // Prepare the new history entry
       const newEntry = {
         city: data.city,
         temperature: data.temperature,
@@ -79,25 +78,19 @@ const WeatherForm = ({
         timestamp: new Date().toISOString(),
       };
 
-      // Check for existing city in history
       const existingIndex = history.findIndex(
         (entry) => entry.city.toLowerCase() === newEntry.city.toLowerCase()
       );
 
       if (existingIndex !== -1) {
-        // Update existing entry in the frontend
         const updatedHistory = [...history];
         updatedHistory[existingIndex] = newEntry;
         setHistory(updatedHistory);
       } else {
-        // Add new entry to history
         setHistory((prev) => [...prev, newEntry]);
       }
 
-      // Save or update in DB
-      await saveWeatherHistory(newEntry); // Make sure your backend handles update if city exists
-
-      // Re-fetch latest history from DB
+      await saveWeatherHistory(newEntry);
       await fetchHistory();
     } catch (error) {
       setError("City Not Found");
@@ -131,68 +124,86 @@ const WeatherForm = ({
   };
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="weather-form-container relative flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl mx-auto bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl transition-all z-10"
-    >
-      <div className="w-full relative">
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Search city..."
-          onFocus={() => setIsFocused(true)}
-          onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-          className="w-full bg-transparent border-b-2 border-white/40 text-white text-lg p-3 rounded-xl placeholder-white outline-none focus:border-white"
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 md:scale-135 scale-120">
-          <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} />
+    <div className="w-full max-w-4xl mx-auto">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl"
+      >
+        {/* Search Input Container */}
+        <div className="relative mb-6">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
+            <FaMapMarkerAlt size={20} />
+          </div>
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city name..."
+            onFocus={() => setIsFocused(true)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => setTimeout(() => setIsFocused(false), 150)}
+            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-xl p-4 pl-12 pr-20 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+          />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} />
+          </div>
         </div>
+
+        {/* Search Button */}
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex items-center justify-center gap-3"
+        >
+          <FaSearch size={18} />
+          Search Weather
+        </button>
+
+        {/* Suggestions Dropdown */}
         {isFocused && (suggestions.length > 0 || history.length > 0) && (
-          <div className="absolute top-full mt-2 left-0 right-0 z-50 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-4 z-50 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl max-h-80 overflow-y-auto">
             {suggestions.map((sugg, idx) => (
               <div
                 key={idx}
                 onClick={() => handleSuggestionClick(sugg)}
-                className="px-4 py-3 hover:bg-blue-100 hover:text-blue-800 cursor-pointer text-base border-b border-gray-100 last:border-b-0 transition"
+                className="px-6 py-4 hover:bg-white/20 hover:text-white cursor-pointer text-white border-b border-white/10 last:border-b-0 transition-all duration-200"
               >
-                <span className="block font-semibold">
-                  {sugg.split(",")[0]}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {sugg.split(",")[1]}
-                </span>
+                <div className="flex items-center gap-3">
+                  <FaMapMarkerAlt className="text-white/60" size={16} />
+                  <div>
+                    <span className="block font-semibold text-lg">
+                      {sugg.split(",")[0]}
+                    </span>
+                    <span className="text-sm text-white/70">
+                      {sugg.split(",").slice(1).join(",")}
+                    </span>
+                  </div>
+                </div>
               </div>
             ))}
+            
             {city.trim().length > 1 && history.length > 0 && (
-              <div className="bg-gray-100 px-4 py-2 text-xs text-gray-600 font-semibold border-t">
-                Recently Searched
+              <div className="bg-white/10 px-6 py-3 text-sm text-white/80 font-semibold border-t border-white/10">
+                🔍 Recently Searched
               </div>
             )}
+            
             {history.map((item, idx) => (
               <div
                 key={`h-${idx}`}
                 onClick={() => handleSuggestionClick(item.city)}
-                className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-sm border-b border-gray-100 last:border-b-0"
+                className="px-6 py-3 hover:bg-white/20 cursor-pointer text-white border-b border-white/10 last:border-b-0 transition-all duration-200"
               >
-                {item.city}
+                <div className="flex items-center gap-3">
+                  <FaMapMarkerAlt className="text-white/60" size={14} />
+                  <span className="font-medium">{item.city}</span>
+                </div>
               </div>
             ))}
           </div>
         )}
-      </div>
-
-      <button
-        type="submit"
-        title="Search"
-        className="px-6 py-3 flex items-center justify-center bg-white/20 hover:bg-white/30 border border-white/30 text-white font-semibold rounded-xl shadow-md transition-all duration-200 hover:cursor-pointer"
-      >
-        <FaSearch className="inline mr-2" />
-        Search
-      </button>
-    </form>
+      </form>
+    </div>
   );
 };
 

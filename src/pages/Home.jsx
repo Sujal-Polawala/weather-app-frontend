@@ -64,7 +64,7 @@ const Home = () => {
     setFromHistory(true);
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800)); // fake delay
+      await new Promise((resolve) => setTimeout(resolve, 800));
       setWeather(historyItem);
       setError(null);
     } catch (err) {
@@ -81,21 +81,37 @@ const Home = () => {
   // const { bg, text } = getBackgroundClass(weather);
 
   return (
-    <div className={`min-h-screen w-full px-4 py-8 sm:px-10 sm:py-14 flex flex-col items-center transition-all duration-700 rounded-3xl ease-in-out`}>
-      <div className="w-full max-w-4xl space-y-8">
-        <WeatherForm
-          setWeather={setWeather}
-          setHistory={setHistory}
-          setError={setError}
-          fetchHistory={fetchHistory}
-          setLoading={setLoading}
-          history={history}
-        />
+    <div className="min-h-screen w-full px-4 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+      <div className="w-full max-w-6xl mx-auto space-y-12">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
+            🌤️ Weather App
+          </h1>
+          <p className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto">
+            Get real-time weather information for any city around the world
+          </p>
+        </div>
 
+        {/* Search Form */}
+        <div className="mb-12">
+          <WeatherForm
+            setWeather={setWeather}
+            setHistory={setHistory}
+            setError={setError}
+            fetchHistory={fetchHistory}
+            setLoading={setLoading}
+            history={history}
+          />
+        </div>
+
+        {/* Weather Display */}
         {loading ? (
-          <WeatherSkeleton />
+          <div className="mb-12">
+            <WeatherSkeleton />
+          </div>
         ) : weather || error ? (
-          <div className="mt-6 transition-all duration-300 ease-in-out p-6 rounded-xl shadow-lg backdrop-blur-md bg-white/30">
+          <div className="mb-12">
             <WeatherDisplay
               weather={weather}
               onClose={handleClose}
@@ -105,11 +121,12 @@ const Home = () => {
           </div>
         ) : null}
 
-        <div className="mt-6">
+        {/* History Section */}
+        <div className="mb-12">
           {loadingHistory ? (
             <HistorySkeleton />
           ) : (
-            <div className="p-4 rounded-xl bg-white/20 backdrop-blur-sm shadow-inner">
+            <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
               <History
                 history={history}
                 setHistory={setHistory}
@@ -121,9 +138,12 @@ const Home = () => {
           )}
         </div>
 
-        <div className="mt-6 p-4 rounded-xl bg-white/20 backdrop-blur-sm shadow-inner">
-          {history.length > 0 && <WeatherTrends history={history} />}
-        </div>
+        {/* Weather Trends */}
+        {history.length > 0 && (
+          <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
+            <WeatherTrends history={history} />
+          </div>
+        )}
       </div>
     </div>
   );
