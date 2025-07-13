@@ -29,7 +29,7 @@ const WeatherStats = ({ history }) => {
     (last7.reduce((sum, h) => sum + h[key], 0) / last7.length).toFixed(1);
 
   return (
-    <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-8">
+    <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-6 sm:mt-8 w-full">
       <StatBox label="Avg Temp (°C)" value={avg("temperature")} unit="°C" />
       <StatBox label="Avg Wind Speed" value={avg("wind_speed")} unit="km/h" />
       <StatBox label="Entries" value={last7.length} unit="/ 7" />

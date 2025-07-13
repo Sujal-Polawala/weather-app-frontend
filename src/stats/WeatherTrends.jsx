@@ -83,8 +83,8 @@ const WeatherTrends = ({ history }) => {
       : 0;
 
   return (
-    <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow p-6 mb-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+    <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow p-4 sm:p-6 mb-6 w-full max-w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-0">
         <h2 className="text-xl font-bold mb-2 sm:mb-0">
           📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}
         </h2>
@@ -103,7 +103,7 @@ const WeatherTrends = ({ history }) => {
       </div>
 
       {/* 🔹 Responsive scrollable container */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-full">
         <div className="min-w-[600px] sm:min-w-full">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={filteredData}>

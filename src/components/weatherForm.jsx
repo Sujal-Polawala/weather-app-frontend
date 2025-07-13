@@ -33,9 +33,10 @@ const WeatherForm = ({
   }, [city]);
 
   const handleSuggestionClick = (suggestion) => {
-    setCity(suggestion);
+    // Always extract just the city name (before comma) for both suggestions and history
+    const cityName = suggestion.split(',')[0].trim();
+    setCity(cityName);
     setSuggestions([]);
-    // Immediately fetch weather for the clicked suggestion
     setTimeout(() => {
       handleSubmit({ preventDefault: () => {} });
     }, 0);
@@ -187,10 +188,11 @@ const WeatherForm = ({
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-row gap-2 items-center">
             <button
               type="submit"
-              className="flex sm:hidden bg-blue-500/80 hover:bg-blue-600/90 text-white rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="flex sm:hidden items-center justify-center rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400"
               tabIndex={-1}
+              style={{ boxShadow: '0 4px 16px 0 rgba(80, 80, 200, 0.15)' }}
             >
-              <HiOutlineSearch size={22} />
+              <HiOutlineSearch size={26} className="text-white drop-shadow" />
             </button>
             <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} />
           </div>
@@ -198,7 +200,7 @@ const WeatherForm = ({
         {/* Search Button */}
         <button
           type="submit"
-          className="hidden sm:flex w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl items-center justify-center gap-3 hover:cursor-pointer"
+          className="hidden sm:flex w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer"
         >
           <HiOutlineSearch size={22} className="text-white drop-shadow" />
           <span>Search Weather</span>
