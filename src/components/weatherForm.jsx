@@ -123,6 +123,13 @@ const WeatherForm = ({
     }
   };
 
+  // Helper to get a weather icon (simulate for suggestions)
+  const getSuggestionIcon = (city) => {
+    // For demo, randomize or use first letter
+    const icons = ["☀️", "🌧️", "⛈️", "❄️", "🌫️", "☁️"];
+    return icons[city.charCodeAt(0) % icons.length];
+  };
+
   // Portal component for suggestions dropdown
   const SuggestionsDropdown = ({ anchorRef, children, visible }) => {
     const [style, setStyle] = useState({});
@@ -186,28 +193,42 @@ const WeatherForm = ({
         {/* Suggestions Dropdown rendered via Portal */}
         <SuggestionsDropdown anchorRef={formRef} visible={isFocused && (suggestions.length > 0 || history.length > 0)}>
           <div
-            className="bg-white/90 border border-gray-200 rounded-2xl shadow-2xl max-h-72 overflow-y-auto divide-y divide-gray-100"
+            className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-3xl shadow-2xl max-h-80 overflow-y-auto p-2 space-y-2 backdrop-blur-xl"
           >
-            {suggestions.map((sugg, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleSuggestionClick(sugg)}
-                className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-blue-100/80 transition-all text-gray-800"
-              >
-                <FaMapMarkerAlt className="text-blue-400" size={18} />
-                <div>
-                  <span className="block font-semibold text-base">
-                    {sugg.split(",")[0]}
+            {/* Suggestions */}
+            {suggestions.map((sugg, idx) => {
+              const cityName = sugg.split(",")[0];
+              const country = sugg.split(",").slice(1).join(",").trim();
+              return (
+                <div
+                  key={idx}
+                  onClick={() => handleSuggestionClick(sugg)}
+                  className="flex items-center gap-4 px-4 py-3 bg-white/80 rounded-2xl shadow hover:bg-blue-200/80 transition-all cursor-pointer border border-transparent hover:border-blue-400 group"
+                  style={{ minHeight: 56 }}
+                >
+                  <span className="text-2xl select-none">
+                    {getSuggestionIcon(cityName)}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {sugg.split(",").slice(1).join(",")}
+                  <div className="flex-1 min-w-0">
+                    <span className="block font-semibold text-base text-gray-800 truncate group-hover:text-blue-700">
+                      {cityName}
+                    </span>
+                    {country && (
+                      <span className="text-xs text-gray-500 truncate">
+                        {country}
+                      </span>
+                    )}
+                  </div>
+                  <span className="ml-auto text-blue-400 font-bold text-xs uppercase tracking-wide group-hover:text-blue-700">
+                    Suggestion
                   </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
+            {/* Recently Searched */}
             {city.trim().length > 1 && history.length > 0 && (
-              <div className="bg-gray-50 px-5 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10">
+              <div className="px-4 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10 bg-gradient-to-r from-blue-50/80 to-purple-50/80 rounded-t-2xl border-b border-blue-100">
                 Recently Searched
               </div>
             )}
@@ -216,10 +237,18 @@ const WeatherForm = ({
               <div
                 key={`h-${idx}`}
                 onClick={() => handleSuggestionClick(item.city)}
-                className="flex items-center gap-3 px-5 py-2 cursor-pointer hover:bg-blue-50 transition-all text-gray-700"
+                className="flex items-center gap-4 px-4 py-2 bg-white/70 rounded-2xl shadow hover:bg-purple-100/80 transition-all cursor-pointer border border-transparent hover:border-purple-400 group"
+                style={{ minHeight: 48 }}
               >
-                <FaMapMarkerAlt className="text-gray-400" size={15} />
-                <span className="font-medium text-sm">{item.city}</span>
+                <span className="text-xl select-none">
+                  {getSuggestionIcon(item.city)}
+                </span>
+                <span className="font-medium text-sm text-gray-700 truncate group-hover:text-purple-700">
+                  {item.city}
+                </span>
+                <span className="ml-auto text-purple-400 font-bold text-xs uppercase tracking-wide group-hover:text-purple-700">
+                  History
+                </span>
               </div>
             ))}
           </div>
