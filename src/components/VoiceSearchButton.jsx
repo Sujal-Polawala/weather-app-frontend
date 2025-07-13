@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaMicrophone } from "react-icons/fa";
+import { HiOutlineMicrophone } from "react-icons/hi";
 
-const VoiceSearchButton = ({ onResult }) => {
+const VoiceSearchButton = ({ onResult, icon }) => {
   const [isListening, setIsListening] = useState(false);
 
   const handleVoiceSearch = () => {
@@ -30,22 +30,21 @@ const VoiceSearchButton = ({ onResult }) => {
 
   return (
     <button
-  type="button"
-  onClick={handleVoiceSearch}
-  title="Speak"
-  className={`w-8 h-8 flex items-center hover:cursor-pointer justify-center rounded-full transition-all
-    ${isListening ? "bg-red-600" : "bg-purple-600 hover:bg-purple-700"}`}
->
-  {!isListening ? (
-    <FaMicrophone className="text-white text-sm" />
-  ) : (
-    <div className="flex gap-[1px]">
-      {[...Array(3)].map((_, i) => (
-        <span key={i} className={`bar bar-${i + 1}`} />
-      ))}
-    </div>
-  )}
-</button>
+      type="button"
+      onClick={handleVoiceSearch}
+      title="Speak"
+      className={`w-10 h-10 flex items-center justify-center rounded-full transition-all shadow-lg border border-purple-200 bg-white/40 backdrop-blur hover:bg-purple-100/60 hover:scale-105 hover:shadow-xl hover:cursor-pointer`}
+    >
+      {!isListening ? (
+        icon ? icon : <HiOutlineMicrophone className="text-purple-600 text-xl" />
+      ) : (
+        <div className="flex gap-[1px]">
+          {[...Array(3)].map((_, i) => (
+            <span key={i} className={`bar bar-${i + 1}`} />
+          ))}
+        </div>
+      )}
+    </button>
   );
 };
 

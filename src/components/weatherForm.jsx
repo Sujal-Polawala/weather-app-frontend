@@ -2,6 +2,7 @@ import { React, useState, useEffect, useRef } from "react";
 import { fetchWeather, saveWeatherHistory } from "../api/weatherApi.jsx";
 import { getCitySuggestions } from "../api/locationApi.jsx";
 import { FaSearch, FaMapMarkerAlt, FaMicrophone } from "react-icons/fa";
+import { HiOutlineSearch, HiOutlineMicrophone } from "react-icons/hi";
 import VoiceSearchButton from "./VoiceSearchButton.jsx";
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
@@ -179,7 +180,7 @@ const WeatherForm = ({
             className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-xl p-4 pl-12 pr-20 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
           />
           <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} />
+            <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} />
           </div>
         </div>
         {/* Search Button */}
@@ -187,7 +188,7 @@ const WeatherForm = ({
           type="submit"
           className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex items-center justify-center gap-3 hover:cursor-pointer"
         >
-          <FaSearch size={18} />
+          <HiOutlineSearch size={22} className="text-white drop-shadow" />
           Search Weather
         </button>
         {/* Suggestions Dropdown rendered via Portal */}

@@ -83,7 +83,7 @@ const WeatherTrends = ({ history }) => {
       : 0;
 
   return (
-    <div className="w-full mt-10 p-4 bg-white/10 rounded-2xl text-current">
+    <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow p-6 mb-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h2 className="text-xl font-bold mb-2 sm:mb-0">
           📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}

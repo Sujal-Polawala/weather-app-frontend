@@ -12,7 +12,7 @@ const ConfirmModal = ({ show, onCancel, onConfirm, title, message }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.25 }}
-            className="relative bg-white/80 backdrop-blur-lg text-gray-800 rounded-2xl shadow-2xl w-full max-w-md px-6 py-8"
+            className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow-xl p-8"
           >
             {/* Close Icon */}
             <button
@@ -35,13 +35,13 @@ const ConfirmModal = ({ show, onCancel, onConfirm, title, message }) => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={onCancel}
-                className="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 shadow transition transform hover:scale-105 hover:cursor-pointer"
+                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
-                className="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium shadow transition transform hover:scale-105 hover:cursor-pointer"
+                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 Delete
               </button>
