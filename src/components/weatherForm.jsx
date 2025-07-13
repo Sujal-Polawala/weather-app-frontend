@@ -190,10 +190,10 @@ const WeatherForm = ({
         {/* Search Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex items-center justify-center gap-3 hover:cursor-pointer"
+          className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-3 sm:py-4 px-4 sm:px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex items-center justify-center gap-2 sm:gap-3 hover:cursor-pointer"
         >
           <HiOutlineSearch size={22} className="text-white drop-shadow" />
-          Search Weather
+          <span className="hidden sm:inline">Search Weather</span>
         </button>
         {/* Suggestions Dropdown rendered via Portal */}
         <SuggestionsDropdown anchorRef={formRef} visible={isFocused && (suggestions.length > 0 || history.length > 0)}>

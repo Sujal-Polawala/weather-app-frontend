@@ -158,6 +158,29 @@ const History = ({
     }
   };
 
+  const handleCancel = (e) => {
+    e.stopPropagation(); // prevent triggering parent click
+    setEditingItem(null);
+    setUpdatedCity("");
+    toast.custom((t) => (
+      <div
+        className={`${
+          t.visible ? "animate-enter" : "animate-leave"
+        } bg-gradient-to-r from-yellow-400/90 to-orange-400/90 backdrop-blur-xl text-white max-w-xs w-full rounded-2xl shadow-2xl p-4 mx-auto border border-yellow-300/30`
+        }
+      >
+        <div className="flex justify-between items-center">
+          <p className="text-sm font-semibold">
+            ⚠️ Edit canceled
+          </p>
+          <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white hover:cursor-pointer">
+            ✖
+          </button>
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <>
       <div className="text-white">
@@ -201,6 +224,7 @@ const History = ({
                   setUpdatedCity={setUpdatedCity}
                   onDelete={() => confirmDelete(item)}
                   onUpdate={handleUpdate}
+                  onCancel={handleCancel}
                 />
               ))}
 
