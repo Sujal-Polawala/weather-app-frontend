@@ -4,6 +4,7 @@ import { getCitySuggestions } from "../api/locationApi.jsx";
 import { FaSearch, FaMapMarkerAlt, FaMicrophone } from "react-icons/fa";
 import VoiceSearchButton from "./VoiceSearchButton.jsx";
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 
 const WeatherForm = ({
   setWeather,
@@ -122,6 +123,32 @@ const WeatherForm = ({
     }
   };
 
+  // Portal component for suggestions dropdown
+  const SuggestionsDropdown = ({ anchorRef, children, visible }) => {
+    const [style, setStyle] = useState({});
+
+    useEffect(() => {
+      if (anchorRef.current && visible) {
+        const rect = anchorRef.current.getBoundingClientRect();
+        setStyle({
+          position: "absolute",
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+          zIndex: 9999,
+        });
+      }
+    }, [anchorRef, visible]);
+
+    if (!visible) return null;
+    return createPortal(
+      <div style={style} className="z-[9999]">
+        {children}
+      </div>,
+      document.body
+    );
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <form
@@ -147,55 +174,7 @@ const WeatherForm = ({
           <div className="absolute right-4 top-1/2 -translate-y-1/2">
             <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} />
           </div>
-
-          {/* Suggestions Dropdown - now only overlays the input area */}
-          {isFocused && (suggestions.length > 0 || history.length > 0) && (
-            <div
-              className="absolute left-0 right-0 mt-2 z-[999]"
-              style={{ minWidth: '100%' }}
-            >
-              <div
-                className="bg-white/90 border border-gray-200 rounded-2xl shadow-2xl max-h-72 overflow-y-auto divide-y divide-gray-100"
-              >
-                {suggestions.map((sugg, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => handleSuggestionClick(sugg)}
-                    className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-blue-100/80 transition-all text-gray-800"
-                  >
-                    <FaMapMarkerAlt className="text-blue-400" size={18} />
-                    <div>
-                      <span className="block font-semibold text-base">
-                        {sugg.split(",")[0]}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {sugg.split(",").slice(1).join(",")}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-
-                {city.trim().length > 1 && history.length > 0 && (
-                  <div className="bg-gray-50 px-5 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10">
-                    Recently Searched
-                  </div>
-                )}
-
-                {history.map((item, idx) => (
-                  <div
-                    key={`h-${idx}`}
-                    onClick={() => handleSuggestionClick(item.city)}
-                    className="flex items-center gap-3 px-5 py-2 cursor-pointer hover:bg-blue-50 transition-all text-gray-700"
-                  >
-                    <FaMapMarkerAlt className="text-gray-400" size={15} />
-                    <span className="font-medium text-sm">{item.city}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
-
         {/* Search Button */}
         <button
           type="submit"
@@ -204,6 +183,47 @@ const WeatherForm = ({
           <FaSearch size={18} />
           Search Weather
         </button>
+        {/* Suggestions Dropdown rendered via Portal */}
+        <SuggestionsDropdown anchorRef={formRef} visible={isFocused && (suggestions.length > 0 || history.length > 0)}>
+          <div
+            className="bg-white/90 border border-gray-200 rounded-2xl shadow-2xl max-h-72 overflow-y-auto divide-y divide-gray-100"
+          >
+            {suggestions.map((sugg, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleSuggestionClick(sugg)}
+                className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-blue-100/80 transition-all text-gray-800"
+              >
+                <FaMapMarkerAlt className="text-blue-400" size={18} />
+                <div>
+                  <span className="block font-semibold text-base">
+                    {sugg.split(",")[0]}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {sugg.split(",").slice(1).join(",")}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {city.trim().length > 1 && history.length > 0 && (
+              <div className="bg-gray-50 px-5 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10">
+                Recently Searched
+              </div>
+            )}
+
+            {history.map((item, idx) => (
+              <div
+                key={`h-${idx}`}
+                onClick={() => handleSuggestionClick(item.city)}
+                className="flex items-center gap-3 px-5 py-2 cursor-pointer hover:bg-blue-50 transition-all text-gray-700"
+              >
+                <FaMapMarkerAlt className="text-gray-400" size={15} />
+                <span className="font-medium text-sm">{item.city}</span>
+              </div>
+            ))}
+          </div>
+        </SuggestionsDropdown>
       </form>
     </div>
   );
