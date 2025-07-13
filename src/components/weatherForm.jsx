@@ -33,9 +33,13 @@ const WeatherForm = ({
   }, [city]);
 
   const handleSuggestionClick = (suggestion) => {
-    // Always extract just the city name (before comma) for both suggestions and history
-    const cityName = suggestion.split(',')[0].trim();
-    setCity(cityName);
+    // Extract city and country
+    const [cityName, country] = suggestion.split(',').map(s => s.trim());
+    if (country) {
+      setCity(`${cityName}, ${country}`);
+    } else {
+      setCity(cityName);
+    }
     setSuggestions([]);
     setTimeout(() => {
       handleSubmit({ preventDefault: () => {} });
