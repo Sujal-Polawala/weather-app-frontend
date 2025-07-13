@@ -35,6 +35,10 @@ const WeatherForm = ({
   const handleSuggestionClick = (suggestion) => {
     setCity(suggestion);
     setSuggestions([]);
+    // Immediately fetch weather for the clicked suggestion
+    setTimeout(() => {
+      handleSubmit({ preventDefault: () => {} });
+    }, 0);
   };
 
   const handleSubmit = async (e) => {
