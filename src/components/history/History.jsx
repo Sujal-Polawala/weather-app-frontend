@@ -5,7 +5,7 @@ import {
   deleteWeatherHistoryItem,
   updateWeatherHistoryItem,
 } from "../../api/weatherApi.jsx";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import ConfirmModel from "../../Confirmation/ConfirmationModel.jsx";
 import { FaHistory, FaHeart, FaTrash, FaEdit } from "react-icons/fa";
 
