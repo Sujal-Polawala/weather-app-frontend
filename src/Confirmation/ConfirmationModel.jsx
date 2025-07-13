@@ -35,13 +35,13 @@ const ConfirmModal = ({ show, onCancel, onConfirm, title, message }) => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={onCancel}
-                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl hover:cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
-                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all duration-300 hover:scale-105 hover:shadow-xl hover:cursor-pointer"
               >
                 Delete
               </button>

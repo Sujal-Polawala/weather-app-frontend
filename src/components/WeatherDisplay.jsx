@@ -106,7 +106,7 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
           <div className="absolute top-4 right-4 z-10">
             <button
               onClick={onClose}
-              className="bg-white/10 backdrop-blur-lg border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 focus:outline-none hover:cursor-pointer p-2 rounded-full"
+              className="bg-white/10 backdrop-blur-lg border border-white/20 text-red-500 hover:text-red-700 hover:bg-white/20 transition-all duration-300 focus:outline-none hover:cursor-pointer p-2 rounded-full hover:cursor-pointer"
               aria-label="Close weather display"
             >
               <FaTimes size={16} />

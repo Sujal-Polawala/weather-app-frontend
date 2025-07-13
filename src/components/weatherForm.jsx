@@ -79,6 +79,7 @@ const WeatherForm = ({
 
       const newEntry = {
         city: data.city,
+        country: data.country,
         temperature: data.temperature,
         description: data.description,
         timestamp: new Date().toISOString(),
@@ -251,7 +252,7 @@ const WeatherForm = ({
             {history.map((item, idx) => (
               <div
                 key={`h-${idx}`}
-                onClick={() => handleSuggestionClick(item.city)}
+                onClick={() => handleSuggestionClick(item.city + (item.country ? ", " + item.country : ""))}
                 className="flex items-center gap-4 px-4 py-2 bg-white/70 rounded-2xl shadow hover:bg-purple-100/80 transition-all cursor-pointer border border-transparent hover:border-purple-400 group"
                 style={{ minHeight: 48 }}
               >
