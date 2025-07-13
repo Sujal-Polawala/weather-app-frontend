@@ -49,11 +49,11 @@ const History = ({
             t.visible ? "animate-enter" : "animate-leave"
           } bg-gradient-to-r from-red-500/90 to-pink-500/90 backdrop-blur-xl text-white max-w-xs w-full rounded-2xl shadow-2xl p-4 mx-auto border border-red-400/30`}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex justify-end items-end">
             <p className="text-sm font-semibold">
               ❤️ {item.city} removed from favorites
             </p>
-            <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white">
+            <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white hover:cursor-pointer">
               ✖
             </button>
           </div>
@@ -71,7 +71,7 @@ const History = ({
             <p className="text-sm font-semibold">
               💖 {item.city} added to favorites
             </p>
-            <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white">
+            <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white hover:cursor-pointer">
               ✖
             </button>
           </div>
@@ -88,7 +88,22 @@ const History = ({
   const removeFavorite = (cityName) => {
     const updated = favorites.filter((fav) => fav.city !== cityName);
     saveFavorites(updated);
-    toast.info(`${cityName} removed from favorites`);
+    toast.custom((t) => (
+      <div
+        className={`${
+          t.visible ? "animate-enter" : "animate-leave"
+        } bg-gradient-to-r from-red-500/90 to-pink-500/90 backdrop-blur-xl text-white max-w-xs w-full rounded-2xl shadow-2xl p-4 mx-auto border border-red-400/30`}
+      >
+        <div className="flex justify-between items-center">
+          <p className="text-sm font-semibold">
+            ❌ {cityName} removed from favorites
+          </p>
+          <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white hover:cursor-pointer">
+            ✖
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   const confirmDelete = (item) => {
@@ -118,7 +133,22 @@ const History = ({
   const handleUpdate = async (id) => {
     try {
       await updateWeatherHistoryItem(id, updatedCity);
-      toast.success(`City updated to "${updatedCity}"`);
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-xl text-white max-w-xs w-full rounded-2xl shadow-2xl p-4 mx-auto border border-green-400/30`}
+        >
+          <div className="flex justify-between items-center">
+            <p className="text-sm font-semibold">
+              ✏️ City updated to "{updatedCity}"
+            </p>
+            <button onClick={() => toast.dismiss(t.id)} className="text-white/80 hover:text-white hover:cursor-pointer">
+              ✖
+            </button>
+          </div>
+        </div>
+      ));
       setEditingItem(null);
       setUpdatedCity("");
       fetchHistory();
