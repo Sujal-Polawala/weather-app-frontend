@@ -249,24 +249,30 @@ const WeatherForm = ({
               </div>
             )}
 
-            {history.map((item, idx) => (
-              <div
-                key={`h-${idx}`}
-                onClick={() => handleSuggestionClick(item.city + (item.country ? ", " + item.country : ""))}
-                className="flex items-center gap-4 px-4 py-2 bg-white/70 rounded-2xl shadow hover:bg-purple-100/80 transition-all cursor-pointer border border-transparent hover:border-purple-400 group"
-                style={{ minHeight: 48 }}
-              >
-                <span className="text-xl select-none">
-                  {getSuggestionIcon(item.city)}
-                </span>
-                <span className="font-medium text-sm text-gray-700 truncate group-hover:text-purple-700">
-                  {item.city}
-                </span>
-                <span className="ml-auto text-purple-400 font-bold text-xs uppercase tracking-wide group-hover:text-purple-700">
-                  History
-                </span>
-              </div>
-            ))}
+            {history.map((item, idx) => {
+              const cityCountry = item.country ? `${item.city}, ${item.country}` : item.city;
+              return (
+                <div
+                  key={`h-${idx}`}
+                  onClick={() => handleSuggestionClick(cityCountry)}
+                  className="flex items-center gap-4 px-4 py-2 bg-white/70 rounded-2xl shadow hover:bg-purple-100/80 transition-all cursor-pointer border border-transparent hover:border-purple-400 group"
+                  style={{ minHeight: 48 }}
+                >
+                  <span className="text-xl select-none">
+                    {getSuggestionIcon(item.city)}
+                  </span>
+                  <span className="font-medium text-sm text-gray-700 truncate group-hover:text-purple-700">
+                    {item.city}
+                    {item.country && (
+                      <span className="text-xs text-gray-500 ml-1">({item.country})</span>
+                    )}
+                  </span>
+                  <span className="ml-auto text-purple-400 font-bold text-xs uppercase tracking-wide group-hover:text-purple-700">
+                    History
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </SuggestionsDropdown>
       </form>
