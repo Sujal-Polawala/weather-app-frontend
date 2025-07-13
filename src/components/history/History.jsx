@@ -159,23 +159,19 @@ const History = ({
           ) : (
             <div className="space-y-4">
               {visibleHistory.map((item, index) => (
-                <div
+                <HistoryItem
                   key={item._id || index}
-                  className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-[1.02]"
-                >
-                  <HistoryItem
-                    item={item}
-                    onClick={() => onHistoryItemClick(item)}
-                    isFavorite={isFavorite(item.city)}
-                    toggleFavorite={() => toggleFavorite(item)}
-                    editingItem={editingItem}
-                    setEditingItem={setEditingItem}
-                    updatedCity={updatedCity}
-                    setUpdatedCity={setUpdatedCity}
-                    onDelete={() => confirmDelete(item)}
-                    onUpdate={handleUpdate}
-                  />
-                </div>
+                  item={item}
+                  onClick={() => onHistoryItemClick(item)}
+                  isFavorite={isFavorite(item.city)}
+                  toggleFavorite={() => toggleFavorite(item)}
+                  editingItem={editingItem}
+                  setEditingItem={setEditingItem}
+                  updatedCity={updatedCity}
+                  setUpdatedCity={setUpdatedCity}
+                  onDelete={() => confirmDelete(item)}
+                  onUpdate={handleUpdate}
+                />
               ))}
 
               {history.length > 5 && (

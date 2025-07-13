@@ -101,7 +101,7 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
   return (
     <div className="relative w-full max-w-screen-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
       {/* Main Weather Card */}
-      <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
+      <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 backdrop-blur-2xl border border-blue-200 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
         {fromHistory && (
           <div className="absolute top-4 right-4 z-10">
             <button
@@ -116,10 +116,15 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
 
         {/* Location Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-white drop-shadow-lg mb-2">
+          <div className="flex justify-center mb-2">
+            <span className="text-6xl sm:text-7xl md:text-8xl drop-shadow-lg">
+              {getWeatherIcon(weather.description)}
+            </span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-gray-800 drop-shadow-lg mb-2">
             {weather.city}
           </h2>
-          <p className="text-white/80 text-lg sm:text-xl">
+          <p className="text-gray-600 text-lg sm:text-xl">
             {weather.state ? `${weather.state}, ` : ""}{weather.country}
           </p>
         </div>
@@ -128,56 +133,53 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Temperature Section */}
           <div className="text-center">
-            <div className="text-6xl sm:text-7xl md:text-8xl mb-4">
-              {getWeatherIcon(weather.description)}
-            </div>
-            <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2">
+            <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-800 mb-2">
               {weather.temperature}°C
             </div>
-            <p className="text-white/70 text-lg">
+            <p className="text-gray-700 text-lg">
               Feels like {weather.feels_like}°C
             </p>
-            <p className="text-white/80 text-xl font-medium mt-2">
+            <p className="text-gray-800 text-xl font-medium mt-2">
               {weather.description}
             </p>
           </div>
 
           {/* Weather Details */}
           <div className="space-y-4">
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-white">
+            <div className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-4 shadow">
+              <div className="flex items-center justify-between text-gray-800">
                 <div className="flex items-center gap-3">
                   <WiThermometer className="text-2xl text-orange-300" />
                   <span className="font-medium">Temperature Range</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-white/70">Min: {weather.temp_min}°C</div>
-                  <div className="text-sm text-white/70">Max: {weather.temp_max}°C</div>
+                  <div className="text-sm text-gray-600">Min: {weather.temp_min}°C</div>
+                  <div className="text-sm text-gray-600">Max: {weather.temp_max}°C</div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-white">
+            <div className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-4 shadow">
+              <div className="flex items-center justify-between text-gray-800">
                 <div className="flex items-center gap-3">
                   <WiStrongWind className="text-2xl text-blue-300" />
                   <span className="font-medium">Wind</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-white/70">{weather.wind_speed} m/s</div>
-                  <div className="text-sm text-white/70">{weather.wind_deg}°</div>
+                  <div className="text-sm text-gray-600">{weather.wind_speed} m/s</div>
+                  <div className="text-sm text-gray-600">{weather.wind_deg}°</div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-white">
+            <div className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-4 shadow">
+              <div className="flex items-center justify-between text-gray-800">
                 <div className="flex items-center gap-3">
                   <WiHumidity className="text-2xl text-cyan-300" />
                   <span className="font-medium">Humidity</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-white/70">{weather.humidity}%</div>
+                  <div className="text-sm text-gray-600">{weather.humidity}%</div>
                 </div>
               </div>
             </div>
@@ -185,19 +187,19 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
         </div>
 
         {/* Sun Timings */}
-        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-lg border border-yellow-400/30 rounded-2xl p-6">
+        <div className="bg-gradient-to-r from-yellow-200/60 to-orange-200/60 backdrop-blur-lg border border-yellow-200 rounded-2xl p-6 shadow">
           <div className="grid grid-cols-2 gap-6 text-center">
             <div className="flex flex-col items-center">
-              <FaSun className="text-3xl text-yellow-300 mb-2" />
-              <span className="text-white/80 text-sm font-medium">Sunrise</span>
-              <span className="text-white text-lg font-semibold">
+              <FaSun className="text-3xl text-yellow-400 mb-2" />
+              <span className="text-gray-700 text-sm font-medium">Sunrise</span>
+              <span className="text-gray-800 text-lg font-semibold">
                 {new Date(weather.sunrise * 1000).toLocaleTimeString()}
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <FaMoon className="text-3xl text-blue-300 mb-2" />
-              <span className="text-white/80 text-sm font-medium">Sunset</span>
-              <span className="text-white text-lg font-semibold">
+              <FaMoon className="text-3xl text-blue-400 mb-2" />
+              <span className="text-gray-700 text-sm font-medium">Sunset</span>
+              <span className="text-gray-800 text-lg font-semibold">
                 {new Date(weather.sunset * 1000).toLocaleTimeString()}
               </span>
             </div>

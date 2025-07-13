@@ -1,6 +1,11 @@
 import React from "react";
 
 const FavoriteCities = ({ favorites, onClick, onRemove }) => {
+  const getSuggestionIcon = (city) => {
+    const icons = ["☀️", "🌧️", "⛈️", "❄️", "🌫️", "☁️"];
+    return icons[city.charCodeAt(0) % icons.length];
+  };
+
   return (
     <div className="mb-6">
       <h2 className="lg:text-2xl text-xl font-semibold mb-3">⭐ Favorite Cities</h2>
@@ -11,15 +16,23 @@ const FavoriteCities = ({ favorites, onClick, onRemove }) => {
           {favorites.map((fav, idx) => (
             <div
               key={fav.city + idx}
-              className="flex justify-between items-center bg-white/10 p-2 rounded hover:bg-white/20 transition-all cursor-pointer"
+              className="flex items-center gap-4 px-4 py-3 bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow hover:bg-blue-200/80 transition-all cursor-pointer border-transparent hover:border-blue-400 group"
+              style={{ minHeight: 56 }}
             >
-              <div onClick={() => onClick(fav)}>
-                <p className="text-lg font-semibold">{fav.city}</p>
-                <p className="text-sm text-gray-600">{fav.description} - {fav.temperature}°C</p>
+              <span className="text-2xl select-none">
+                {getSuggestionIcon(fav.city)}
+              </span>
+              <div className="flex-1 min-w-0" onClick={() => onClick(fav)}>
+                <span className="block font-semibold text-base text-gray-800 truncate group-hover:text-blue-700">
+                  {fav.city}
+                </span>
+                <span className="text-xs text-gray-500 truncate">
+                  {fav.description} - {fav.temperature}°C
+                </span>
               </div>
               <button
                 onClick={() => onRemove(fav.city)}
-                className="text-red-400 hover:text-red-600 text-sm hover:cursor-pointer"
+                className="text-red-400 hover:text-red-600 text-sm hover:cursor-pointer ml-auto"
               >
                 ❌
               </button>

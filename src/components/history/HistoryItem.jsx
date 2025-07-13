@@ -4,6 +4,11 @@ import { FaClock, FaTrash, FaEdit } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { toast } from "react-toastify";
 
+const getSuggestionIcon = (city) => {
+  const icons = ["☀️", "🌧️", "⛈️", "❄️", "🌫️", "☁️"];
+  return icons[city.charCodeAt(0) % icons.length];
+};
+
 const HistoryItem = ({
   item,
   onClick,
@@ -24,14 +29,13 @@ const HistoryItem = ({
   };
 
   return (
-    <div className="border-b border-gray-600 py-3 px-2 sm:px-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-white/10 rounded transition-all hover:cursor-pointer">
-      {/* Info section */}
-      <div
-        className="flex-1 w-full"
-        onClick={(e) => {
-          if (editingItem !== item._id) onClick(e);
-        }}
-      >
+    <div className="flex items-center gap-4 px-4 py-3 bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow hover:bg-purple-100/80 transition-all cursor-pointer border-transparent hover:border-purple-400 group min-h-[56px]">
+      <span className="text-2xl select-none">
+        {getSuggestionIcon(item.city)}
+      </span>
+      <div className="flex-1 min-w-0" onClick={(e) => {
+        if (editingItem !== item._id) onClick(e);
+      }}>
         {editingItem === item._id ? (
           <input
             type="text"
@@ -43,25 +47,23 @@ const HistoryItem = ({
           />
         ) : (
           <>
-            <p className="text-base sm:text-lg font-semibold break-words hover:cursor-pointer">
+            <span className="block font-semibold text-base text-gray-800 truncate group-hover:text-purple-700">
               {item.city} - {item.temperature}°C
-            </p>
-            <p className="text-sm text-gray-600 break-words">
+            </span>
+            <span className="text-xs text-gray-500 truncate">
               {item.description}
-            </p>
+            </span>
           </>
         )}
       </div>
-
       {/* Action section */}
-      <div className="flex flex-wrap sm:flex-nowrap items-center text-sm text-gray-300 gap-3 w-full sm:w-auto">
+      <div className="flex flex-wrap sm:flex-nowrap items-center text-sm text-gray-300 gap-3 w-full sm:w-auto ml-auto">
         <div className="flex items-center">
           <FaClock className="mr-1" />
           <span className="text-xs sm:text-sm">
             {formatDate(item.timestamp)}
           </span>
         </div>
-
         <button
           title="Toggle Favorite"
           onClick={toggleFavorite}
@@ -69,7 +71,6 @@ const HistoryItem = ({
         >
           {isFavorite ? <AiFillStar /> : <AiOutlineStar />}
         </button>
-
         {editingItem === item._id ? (
           <>
             <button
@@ -101,7 +102,6 @@ const HistoryItem = ({
             <FaEdit />
           </button>
         )}
-
         <button
           title="Delete City"
           onClick={() => onDelete(item._id)}
