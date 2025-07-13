@@ -99,9 +99,9 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
   };
 
   return (
-    <div className="relative w-full max-w-screen-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
+    <div className="relative w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto px-1 sm:px-0">
       {/* Main Weather Card */}
-      <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 backdrop-blur-2xl border border-blue-200 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
+      <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 backdrop-blur-2xl border border-blue-200 p-4 sm:p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl w-full">
         {fromHistory && (
           <div className="absolute top-4 right-4 z-10">
             <button

@@ -81,8 +81,8 @@ const Home = () => {
   // const { bg, text } = getBackgroundClass(weather);
 
   return (
-    <div className="min-h-screen w-full px-4 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-16">
-      <div className="w-full max-w-6xl mx-auto space-y-12">
+    <div className="min-h-screen w-full px-2 py-4 sm:px-4 sm:py-8 md:px-8 md:py-12 lg:px-12 lg:py-16 flex flex-col items-center">
+      <div className="w-full max-w-6xl mx-auto space-y-8 sm:space-y-10 md:space-y-12">
         {/* Header Section */}
         {/* <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-2xl">

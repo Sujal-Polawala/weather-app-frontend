@@ -166,10 +166,10 @@ const WeatherForm = ({
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl"
+        className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-4 sm:p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl w-full"
       >
         {/* Search Input Container */}
-        <div className="w-full relative mb-6">
+        <div className="w-full relative mb-6 flex flex-row items-center gap-2">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
             <FaMapMarkerAlt size={20} />
           </div>
@@ -183,7 +183,15 @@ const WeatherForm = ({
             onBlur={() => setTimeout(() => setIsFocused(false), 150)}
             className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-xl p-4 pl-12 pr-20 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          {/* On small screens, show search icon button before voice icon */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-row gap-2 items-center">
+            <button
+              type="submit"
+              className="block sm:hidden bg-blue-500/80 hover:bg-blue-600/90 text-white rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              tabIndex={-1}
+            >
+              <HiOutlineSearch size={22} />
+            </button>
             <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} />
           </div>
         </div>
