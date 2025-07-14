@@ -35,7 +35,7 @@ const WeatherForm = ({
   const handleSuggestionClick = (suggestion) => {
     // Extract city and country
     const [cityName, country] = suggestion.split(',').map(s => s.trim());
-    const selectedCity = country ? `${cityName}, ${country}` : cityName;
+    const selectedCity = country ? `${cityName},${country}` : cityName;
     console.log("Dropdown clicked:", selectedCity);
     setCity(selectedCity);
     setSuggestions([]);
@@ -252,7 +252,7 @@ const WeatherForm = ({
             )}
 
             {history.map((item, idx) => {
-              const cityCountry = item.country ? `${item.city}, ${item.country}` : item.city;
+              const cityCountry = item.country ? `${item.city},${item.country}` : item.city;
               return (
                 <div
                   key={`h-${idx}`}
