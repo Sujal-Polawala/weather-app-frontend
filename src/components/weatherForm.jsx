@@ -247,7 +247,7 @@ const WeatherForm = ({
             })}
 
             {/* Recently Searched */}
-            {city.trim().length > 1 && history.length > 0 && (
+            {history.length > 0 && (
               <div className="px-4 py-2 text-xs text-gray-500 font-semibold sticky top-0 z-10 bg-gradient-to-r from-blue-50/80 to-purple-50/80 rounded-t-2xl border-b border-blue-100">
                 Recently Searched
               </div>
