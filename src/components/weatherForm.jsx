@@ -76,7 +76,7 @@ const WeatherForm = ({
         sunset: rawData.sunset,
       };
 
-      setWeather(data);
+      setWeather({ ...data, fromHistory: overrideCity !== undefined });
       setError(null);
 
       const newEntry = {
