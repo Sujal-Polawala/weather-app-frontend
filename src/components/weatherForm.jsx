@@ -38,9 +38,7 @@ const WeatherForm = ({
     const selectedCity = country ? `${cityName}, ${country}` : cityName;
     setCity(selectedCity);
     setSuggestions([]);
-    setTimeout(() => {
-      handleSubmit({ preventDefault: () => {} }, selectedCity);
-    }, 0);
+    handleSubmit({ preventDefault: () => {} }, selectedCity); // No setTimeout needed
   };
 
   const handleSubmit = async (e, overrideCity) => {
