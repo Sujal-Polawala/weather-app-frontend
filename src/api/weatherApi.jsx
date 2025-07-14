@@ -63,9 +63,12 @@ export const getClothingSuggestion = async (temp, desc) => {
 // Fetch weather data for a given city
 export const fetchWeather = async (city) => {
   try {
+    console.log("API CALL:", `${API_BASE_URL}/${city}`);
     const response = await axios.get(`${API_BASE_URL}/${city}`);
+    console.log("API RESPONSE:", response.data);
     return response.data;
   } catch (error) {
+    console.error("API ERROR:", error);
     if (error.response && error.response.status === 404) {
       throw new Error("City not found");
     }
