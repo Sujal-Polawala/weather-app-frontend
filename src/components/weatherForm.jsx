@@ -36,9 +36,10 @@ const WeatherForm = ({
     // Extract city and country
     const [cityName, country] = suggestion.split(',').map(s => s.trim());
     const selectedCity = country ? `${cityName}, ${country}` : cityName;
+    console.log("Dropdown clicked:", selectedCity);
     setCity(selectedCity);
     setSuggestions([]);
-    handleSubmit({ preventDefault: () => {} }, selectedCity); // No setTimeout needed
+    handleSubmit({ preventDefault: () => {} }, selectedCity);
   };
 
   const handleSubmit = async (e, overrideCity) => {
@@ -52,6 +53,7 @@ const WeatherForm = ({
 
     setLoading(true);
     try {
+      console.log("Fetching weather for:", cityToFetch);
       const rawData = await fetchWeather(cityToFetch);
       if (!rawData || !rawData.city) {
         setError("City not found. Please try again.");
