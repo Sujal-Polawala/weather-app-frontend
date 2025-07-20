@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useRef } from "react";
 import WeatherForm from "../components/weatherForm.jsx";
 import WeatherDisplay from "../components/WeatherDisplay.jsx";
 import History from "../components/history/History.jsx";
@@ -15,6 +15,10 @@ const Home = () => {
 
   const { history, setHistory, fetchHistory, loadingHistory } =
     useWeatherHistory();
+
+  // Refs for scroll targets
+  const weatherDisplayRef = useRef(null);
+  const favoriteCitiesRef = useRef(null);
 
   // const getBackgroundClass = (weather) => {
   //   if (!weather || !weather.description) {
@@ -107,11 +111,11 @@ const Home = () => {
 
         {/* Weather Display */}
         {loading ? (
-          <div className="mb-12">
+          <div className="mb-12" ref={weatherDisplayRef}>
             <WeatherSkeleton />
           </div>
         ) : weather || error ? (
-          <div className="mb-12">
+          <div className="mb-12" ref={weatherDisplayRef}>
             <WeatherDisplay
               weather={weather}
               onClose={handleClose}
@@ -127,13 +131,17 @@ const Home = () => {
             <HistorySkeleton />
           ) : (
             <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
-              <History
-                history={history}
-                setHistory={setHistory}
-                setWeather={setWeather}
-                fetchHistory={fetchHistory}
-                onHistoryItemClick={handleHistoryItemClick}
-              />
+              <div ref={favoriteCitiesRef}>
+                <History
+                  history={history}
+                  setHistory={setHistory}
+                  setWeather={setWeather}
+                  fetchHistory={fetchHistory}
+                  onHistoryItemClick={handleHistoryItemClick}
+                  weatherDisplayRef={weatherDisplayRef}
+                  favoriteCitiesRef={favoriteCitiesRef}
+                />
+              </div>
             </div>
           )}
         </div>
