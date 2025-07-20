@@ -153,12 +153,17 @@ const History = ({
       ));
       setEditingItem(null);
       setUpdatedCity("");
-      fetchHistory();
+      const newHistory = await fetchHistory();
       // Scroll to top after edit
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // Display weather data for the updated city
-      if (onHistoryItemClick) {
-        onHistoryItemClick({ city: updatedCity });
+      if (onHistoryItemClick && newHistory) {
+        const updatedItem = newHistory.find(
+          (entry) => entry.city && entry.city.toLowerCase() === updatedCity.toLowerCase()
+        );
+        if (updatedItem) {
+          onHistoryItemClick(updatedItem);
+        }
       }
     } catch (err) {
       console.error("Error updating:", err);
