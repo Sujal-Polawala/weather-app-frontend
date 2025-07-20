@@ -1,7 +1,7 @@
 import { React, useState, useEffect, useRef } from "react";
 import { fetchWeather, saveWeatherHistory } from "../api/weatherApi.jsx";
 import { getCitySuggestions } from "../api/locationApi.jsx";
-import { FaSearch, FaMapMarkerAlt, FaMicrophone } from "react-icons/fa";
+import { FaSearch, FaMapMarkerAlt, FaMicrophone, FaLocationArrow } from "react-icons/fa";
 import { HiOutlineSearch, HiOutlineMicrophone } from "react-icons/hi";
 import VoiceSearchButton from "./VoiceSearchButton.jsx";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ const WeatherForm = ({
   const [city, setCity] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -111,6 +112,97 @@ const WeatherForm = ({
     setLoading(false);
   };
 
+  const getCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsGettingLocation(true);
+    setLoading(true);
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      
+      // Fetch weather data using coordinates
+      const response = await fetchWeather(`${latitude},${longitude}`);
+      
+      if (!response || !response.city) {
+        setError("Unable to get weather for current location");
+        setWeather(null);
+        return;
+      }
+
+      const data = {
+        city: response.city,
+        country: response.country,
+        temperature: response.temperature,
+        feels_like: response.feels_like,
+        temp_min: response.temp_min,
+        temp_max: response.temp_max,
+        description: response.description,
+        wind_speed: response.wind_speed,
+        wind_deg: response.wind_deg,
+        humidity: response.humidity,
+        sunrise: response.sunrise,
+        sunset: response.sunset,
+      };
+
+      setWeather({ ...data, fromHistory: false });
+      setError(null);
+
+      const newEntry = {
+        city: data.city,
+        country: data.country,
+        temperature: data.temperature,
+        description: data.description,
+        timestamp: new Date().toISOString(),
+      };
+
+      const existingIndex = history.findIndex(
+        (entry) => entry.city.toLowerCase() === newEntry.city.toLowerCase()
+      );
+
+      if (existingIndex !== -1) {
+        const updatedHistory = [...history];
+        updatedHistory[existingIndex] = newEntry;
+        setHistory(updatedHistory);
+      } else {
+        setHistory((prev) => [...prev, newEntry]);
+      }
+
+      await saveWeatherHistory(newEntry);
+      await fetchHistory();
+      
+      toast.success(`Weather for ${data.city}, ${data.country}`);
+      
+    } catch (error) {
+      console.error("Location error:", error);
+      if (error.code === 1) {
+        toast.error("Location access denied. Please enable location permissions.");
+      } else if (error.code === 2) {
+        toast.error("Location unavailable. Please try again.");
+      } else if (error.code === 3) {
+        toast.error("Location request timed out. Please try again.");
+      } else {
+        toast.error("Unable to get current location weather");
+      }
+      setError("Unable to get weather for current location");
+      setWeather(null);
+    } finally {
+      setIsGettingLocation(false);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (formRef.current && !formRef.current.contains(event.target)) {
@@ -198,16 +290,38 @@ const WeatherForm = ({
               <HiOutlineSearch size={26} className="text-white drop-shadow" />
             </button>
             <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} />
+            <button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={isGettingLocation}
+              className="flex items-center justify-center rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              tabIndex={-1}
+              style={{ boxShadow: '0 4px 16px 0 rgba(80, 80, 200, 0.15)' }}
+              title="Get current location weather"
+            >
+              <FaLocationArrow size={26} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
+            </button>
           </div>
         </div>
-        {/* Search Button */}
-        <button
-          type="submit"
-          className="hidden sm:flex w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer"
-        >
-          <HiOutlineSearch size={22} className="text-white drop-shadow" />
-          <span>Search Weather</span>
-        </button>
+        {/* Search and Location Buttons */}
+        <div className="hidden sm:flex gap-4">
+          <button
+            type="submit"
+            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer"
+          >
+            <HiOutlineSearch size={22} className="text-white drop-shadow" />
+            <span>Search Weather</span>
+          </button>
+          <button
+            type="button"
+            onClick={getCurrentLocation}
+            disabled={isGettingLocation}
+            className="bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-3 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FaLocationArrow size={20} className="text-white drop-shadow" />
+            <span>{isGettingLocation ? "Getting Location..." : "Current Location"}</span>
+          </button>
+        </div>
         {/* Suggestions Dropdown rendered via Portal */}
         <SuggestionsDropdown anchorRef={formRef} visible={isFocused && (suggestions.length > 0 || history.length > 0)}>
           <div
