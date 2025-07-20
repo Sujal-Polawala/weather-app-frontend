@@ -274,20 +274,9 @@ const WeatherForm = ({
       >
         {/* Search Input and Location Button Container */}
         <div className="w-full flex flex-col sm:flex-row gap-3 mb-4">
-          {/* Input with search and voice button inside */}
+          {/* Input with voice and search button inside */}
           <div className="relative flex-1 flex items-center">
-            {/* Search icon button (left, only visible on large screens) */}
-            <button
-              type="submit"
-              className="hidden sm:flex items-center justify-center absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              style={{ zIndex: 2 }}
-              tabIndex={0}
-              title="Search Weather"
-              disabled={isSearching}
-            >
-              <HiOutlineSearch size={20} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
-            </button>
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 sm:hidden">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
               <FaMapMarkerAlt size={20} />
             </div>
             <input
@@ -298,11 +287,10 @@ const WeatherForm = ({
               onFocus={() => setIsFocused(true)}
               onKeyDown={handleKeyDown}
               onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-              className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 sm:pl-14 pr-16 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
-              style={{ paddingLeft: '3.5rem' }}
+              className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-32 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
             />
-            {/* Voice button inside input on all screens */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            {/* Voice and Search buttons inside input on large screens */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
               <VoiceSearchButton 
                 onResult={(spokenCity) => {
                   setCity(spokenCity);
@@ -313,6 +301,16 @@ const WeatherForm = ({
                 icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />} 
                 isMobile={true}
               />
+              <button
+                type="submit"
+                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                style={{ zIndex: 2 }}
+                tabIndex={0}
+                title="Search Weather"
+                disabled={isSearching}
+              >
+                <HiOutlineSearch size={20} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
+              </button>
             </div>
           </div>
           {/* Current Location button (desktop: right of input, mobile: below input) */}
@@ -320,13 +318,12 @@ const WeatherForm = ({
             type="button"
             onClick={getCurrentLocation}
             disabled={isGettingLocation}
-            className="w-full sm:w-auto sm:h-auto flex-none bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base sm:text-lg py-3 sm:py-0 px-4 sm:px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
+            className="hidden sm:flex w-auto h-auto flex-none bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[56px]"
             style={{ minHeight: '56px', height: '100%' }}
             title="Get current location weather"
           >
             <FaLocationArrow size={20} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">{isGettingLocation ? "Getting Location..." : "Current Location"}</span>
-            <span className="sm:hidden">{isGettingLocation ? "Getting..." : "Location"}</span>
+            <span>{isGettingLocation ? "Getting Location..." : "Current Location"}</span>
           </button>
         </div>
         {/* Mobile Action Buttons (search & location side by side) */}
