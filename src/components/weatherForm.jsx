@@ -272,38 +272,52 @@ const WeatherForm = ({
         onSubmit={handleSubmit}
         className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-4 sm:p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl w-full"
       >
-        {/* Search Input Container */}
-        <div className="w-full relative mb-4">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
-            <FaMapMarkerAlt size={20} />
-          </div>
-          <input
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Enter city name..."
-            onFocus={() => setIsFocused(true)}
-            onKeyDown={handleKeyDown}
-            onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-20 sm:pr-4 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
-          />
-          {/* Voice button inside input on small screens */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden">
-            <VoiceSearchButton 
-              onResult={(spokenCity) => {
-                setCity(spokenCity);
-                // Auto-trigger search after voice input
-                setTimeout(() => {
-                  handleSubmit({ preventDefault: () => {} }, spokenCity);
-                }, 500);
-              }} 
-              icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />}
-              isMobile={true}
+        {/* Search Input and Location Button Container */}
+        <div className="w-full flex flex-col sm:flex-row gap-3 mb-4">
+          {/* Input with voice button inside */}
+          <div className="relative flex-1">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
+              <FaMapMarkerAlt size={20} />
+            </div>
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Enter city name..."
+              onFocus={() => setIsFocused(true)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setTimeout(() => setIsFocused(false), 150)}
+              className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-16 sm:pr-16 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
             />
+            {/* Voice button inside input on all screens */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <VoiceSearchButton 
+                onResult={(spokenCity) => {
+                  setCity(spokenCity);
+                  setTimeout(() => {
+                    handleSubmit({ preventDefault: () => {} }, spokenCity);
+                  }, 500);
+                }} 
+                icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />} 
+                isMobile={true}
+              />
+            </div>
           </div>
+          {/* Current Location button (desktop: right of input, mobile: below input) */}
+          <button
+            type="button"
+            onClick={getCurrentLocation}
+            disabled={isGettingLocation}
+            className="w-full sm:w-auto sm:h-auto flex-none bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base sm:text-lg py-3 sm:py-0 px-4 sm:px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
+            style={{ minHeight: '56px', height: '100%' }}
+            title="Get current location weather"
+          >
+            <FaLocationArrow size={20} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isGettingLocation ? "Getting Location..." : "Current Location"}</span>
+            <span className="sm:hidden">{isGettingLocation ? "Getting..." : "Location"}</span>
+          </button>
         </div>
-
-        {/* Mobile Action Buttons */}
+        {/* Mobile Action Buttons (search) */}
         <div className="flex sm:hidden gap-3 mb-4">
           <button
             type="submit"
@@ -312,46 +326,6 @@ const WeatherForm = ({
           >
             <HiOutlineSearch size={18} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
             <span>{isSearching ? "Searching..." : "Search"}</span>
-          </button>
-          <button
-            type="button"
-            onClick={getCurrentLocation}
-            disabled={isGettingLocation}
-            className="flex-1 bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Get current location weather"
-          >
-            <FaLocationArrow size={18} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
-            <span>{isGettingLocation ? "Getting..." : "Location"}</span>
-          </button>
-        </div>
-        {/* Search and Location Buttons */}
-        <div className="hidden sm:flex gap-4">
-          <button
-            type="submit"
-            disabled={isSearching}
-            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <HiOutlineSearch size={22} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
-            <span>{isSearching ? "Searching..." : "Search Weather"}</span>
-          </button>
-          <VoiceSearchButton 
-            onResult={(spokenCity) => {
-              setCity(spokenCity);
-              // Auto-trigger search after voice input
-              setTimeout(() => {
-                handleSubmit({ preventDefault: () => {} }, spokenCity);
-              }, 500);
-            }} 
-            icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} 
-          />
-          <button
-            type="button"
-            onClick={getCurrentLocation}
-            disabled={isGettingLocation}
-            className="bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-3 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FaLocationArrow size={20} className="text-white drop-shadow" />
-            <span>{isGettingLocation ? "Getting Location..." : "Current Location"}</span>
           </button>
         </div>
         {/* Suggestions Dropdown rendered via Portal */}
