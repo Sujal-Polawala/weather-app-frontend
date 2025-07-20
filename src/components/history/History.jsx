@@ -121,6 +121,8 @@ const History = ({
         setWeather(null);
       }
       fetchHistory();
+      // Scroll to top after delete
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error("Error deleting:", err);
       toast.error("Failed to delete the history item");
@@ -152,6 +154,8 @@ const History = ({
       setEditingItem(null);
       setUpdatedCity("");
       fetchHistory();
+      // Scroll to top after edit
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error("Error updating:", err);
       toast.error("Failed to update city");
@@ -188,7 +192,10 @@ const History = ({
         <div className="mb-8">
           <FavoriteCities
             favorites={favorites}
-            onClick={onHistoryItemClick}
+            onClick={(fav) => {
+              onHistoryItemClick(fav);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             onRemove={removeFavorite}
           />
         </div>

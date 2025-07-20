@@ -42,6 +42,8 @@ const WeatherForm = ({
     setCity(selectedCity);
     setSuggestions([]);
     handleSubmit({ preventDefault: () => {} }, selectedCity);
+    // Scroll to top so weather data is visible
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async (e, overrideCity) => {
@@ -287,7 +289,7 @@ const WeatherForm = ({
               onFocus={() => setIsFocused(true)}
               onKeyDown={handleKeyDown}
               onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-              className="w-full min-w-0 bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-32 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+              className="w-full min-w-0 bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-base sm:text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
             />
             {/* Voice and Search buttons grouped together at right end of input */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
