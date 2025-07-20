@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   BarChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -9,19 +10,26 @@ import {
   Legend,
   ReferenceLine,
   ResponsiveContainer,
+  Area,
+  AreaChart,
+  ComposedChart,
 } from "recharts";
 
-// 🔹 Custom Tooltip Component (unchanged)
+// 🔹 Custom Tooltip Component (modern look)
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const entry = payload[0].payload;
     return (
-      <div className="bg-white p-3 rounded-lg shadow-lg text-sm text-gray-700">
-        <p>
-          <strong>{entry.city}</strong> – {label}
-        </p>
-        <p>🌡️ Temp: {entry.temperature}°C</p>
-        <p>💨 Wind: {entry.wind_speed} km/h</p>
+      <div className="bg-white/90 p-4 rounded-xl shadow-xl text-base text-gray-800 min-w-[140px] border border-blue-200">
+        <div className="font-bold text-blue-600 mb-1">{entry.city}</div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-2xl">🌡️</span>
+          <span>Temp: <b>{entry.temperature}°C</b></span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">💨</span>
+          <span>Wind: <b>{entry.wind_speed} km/h</b></span>
+        </div>
       </div>
     );
   }
@@ -65,6 +73,7 @@ const WeatherTrends = ({ history }) => {
       temperature: entry.temperature,
       wind_speed: entry.wind_speed || 0,
       label: `${entry.city}`,
+      // icon: entry.icon, // Uncomment if you have weather icon info
     }));
 
   const filteredData =
@@ -104,61 +113,84 @@ const WeatherTrends = ({ history }) => {
 
       {/* 🔹 Responsive scrollable container */}
       <div className="overflow-x-auto w-full">
-        <div className="min-w-[600px] sm:min-w-full">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={filteredData}>
-              <CartesianGrid strokeDasharray="4 4" stroke="#ccc" />
+        <div className="min-w-[700px] sm:min-w-full">
+          <ResponsiveContainer width="100%" height={320}>
+            <ComposedChart data={filteredData} margin={{ top: 30, right: 30, left: 0, bottom: 40 }}>
+              <defs>
+                <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
               <XAxis
                 dataKey="label"
-                stroke="#000000"
+                stroke="#64748b"
                 interval={0}
                 angle={40}
                 textAnchor="start"
                 height={60}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
                 tickFormatter={(value) => value.length > 10 ? value.slice(0, 10) + '…' : value}
               />
-              <YAxis stroke="#000000" />
-              <Tooltip content={<CustomTooltip />} />
+              <YAxis
+                stroke="#64748b"
+                tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#e0e7ff', opacity: 0.2 }} />
               <Legend
                 content={(props) => (
                   <CustomLegend {...props} avgTemp={avgTemp} />
                 )}
               />
-              <Bar
+              <ReferenceLine
+                y={parseFloat(avgTemp)}
+                stroke="#22d3ee"
+                strokeDasharray="3 3"
+                label={{
+                  value: `Avg Temp: ${avgTemp}°C`,
+                  position: "top",
+                  fill: "#22d3ee",
+                  fontSize: 13,
+                }}
+              />
+              {/* Temperature as smooth line with area gradient */}
+              <Area
+                type="monotone"
                 dataKey="temperature"
                 name="Temperature (°C)"
-                fill="#3b82f6"
-                barSize={30}
-                radius={[6, 6, 0, 0]}
+                stroke="#3b82f6"
+                fillOpacity={1}
+                fill="url(#tempGradient)"
+                strokeWidth={3}
+                dot={{ r: 4, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 7 }}
                 isAnimationActive={true}
-                animationDuration={1000}
+                animationDuration={1200}
                 animationEasing="ease-out"
               />
+              {/* Wind speed as bars */}
               <Bar
                 dataKey="wind_speed"
                 name="Wind Speed (km/h)"
                 fill="#facc15"
-                barSize={30}
+                barSize={22}
                 radius={[6, 6, 0, 0]}
                 isAnimationActive={true}
-                animationDuration={1000}
+                animationDuration={1200}
                 animationEasing="ease-out"
               />
-              {filteredData.length > 0 && (
-                <ReferenceLine
-                  y={parseFloat(avgTemp)}
-                  stroke="#97ffab"
-                  strokeDasharray="3 3"
-                  label={{
-                    value: `Avg Temp: ${avgTemp}°C`,
-                    position: "top",
-                    fill: "#97ffab",
-                    fontSize: 12,
-                  }}
-                />
-              )}
-            </BarChart>
+              {/* Optional: Weather icons above each city label (if you have icon info)
+              <XAxis ... tick={({ x, y, payload }) => (
+                <g>
+                  <image x={x-10} y={y-30} width={20} height={20} xlinkHref={getIconUrl(payload.value)} />
+                  <text ...>{payload.value}</text>
+                </g>
+              )} />
+              */}
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </div>
