@@ -287,16 +287,10 @@ const WeatherForm = ({
               onFocus={() => setIsFocused(true)}
               onKeyDown={handleKeyDown}
               onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-              className="w-full min-w-0 bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-14 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+              className="w-full min-w-0 bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-32 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
             />
-            {/* Voice button absolutely positioned inside input */}
-            <button
-              type="button"
-              className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 shadow-lg border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400 hover:cursor-pointer"
-              style={{ zIndex: 2 }}
-              tabIndex={0}
-              title="Voice Search"
-            >
+            {/* Voice and Search buttons grouped together at right end of input */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
               <VoiceSearchButton 
                 onResult={(spokenCity) => {
                   setCity(spokenCity);
@@ -307,18 +301,17 @@ const WeatherForm = ({
                 icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />} 
                 isMobile={true}
               />
-            </button>
-            {/* Search button absolutely positioned inside input */}
-            <button
-              type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
-              style={{ zIndex: 2 }}
-              tabIndex={0}
-              title="Search Weather"
-              disabled={isSearching}
-            >
-              <HiOutlineSearch size={20} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
-            </button>
+              <button
+                type="submit"
+                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
+                style={{ zIndex: 2 }}
+                tabIndex={0}
+                title="Search Weather"
+                disabled={isSearching}
+              >
+                <HiOutlineSearch size={20} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
           </div>
           {/* Current Location button (desktop: right of input, mobile: below input) */}
           <button
