@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import WeatherForm from "../components/weatherForm.jsx";
 import WeatherDisplay from "../components/WeatherDisplay.jsx";
 import History from "../components/history/History.jsx";
@@ -13,6 +13,7 @@ const Home = () => {
   const [fromHistory, setFromHistory] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pendingWeatherCity, setPendingWeatherCity] = useState("");
 
   const { history, setHistory, fetchHistory, loadingHistory } =
     useWeatherHistory();
@@ -66,7 +67,7 @@ const Home = () => {
     setLoading(true);
     try {
       let weatherData = historyItem;
-      // If item does not have temperature or description, fetch weather
+      // Always fetch weather if missing temperature/description
       if (!historyItem.temperature || !historyItem.description) {
         const cityQuery = historyItem.city && historyItem.country ? `${historyItem.city},${historyItem.country}` : historyItem.city;
         weatherData = await fetchWeather(cityQuery);
@@ -78,6 +79,19 @@ const Home = () => {
     }
     setLoading(false);
   };
+
+  // Effect to fetch weather for updated city after history changes
+  useEffect(() => {
+    if (pendingWeatherCity) {
+      const updatedItem = history.find(
+        (entry) => entry.city && entry.city.toLowerCase() === pendingWeatherCity.toLowerCase()
+      );
+      if (updatedItem) {
+        handleHistoryItemClick(updatedItem);
+        setPendingWeatherCity("");
+      }
+    }
+  }, [pendingWeatherCity, history]);
 
   const handleClose = () => {
     setWeather(null);
@@ -139,6 +153,7 @@ const Home = () => {
                 setWeather={setWeather}
                 fetchHistory={fetchHistory}
                 onHistoryItemClick={handleHistoryItemClick}
+                setPendingWeatherCity={setPendingWeatherCity}
               />
             </div>
           )}

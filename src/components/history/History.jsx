@@ -18,6 +18,7 @@ const History = ({
   setWeather,
   weatherDisplayRef,
   favoriteCitiesRef,
+  setPendingWeatherCity,
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -160,7 +161,7 @@ const History = ({
       await fetchHistory();
       // Scroll to top after edit
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setPendingUpdatedCity(updatedCity);
+      if (setPendingWeatherCity) setPendingWeatherCity(updatedCity);
     } catch (err) {
       console.error("Error updating:", err);
       toast.error("Failed to update city");
