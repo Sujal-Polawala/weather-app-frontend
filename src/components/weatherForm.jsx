@@ -285,8 +285,22 @@ const WeatherForm = ({
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
             onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-4 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-20 sm:pr-4 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
           />
+          {/* Voice button inside input on small screens */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden">
+            <VoiceSearchButton 
+              onResult={(spokenCity) => {
+                setCity(spokenCity);
+                // Auto-trigger search after voice input
+                setTimeout(() => {
+                  handleSubmit({ preventDefault: () => {} }, spokenCity);
+                }, 500);
+              }} 
+              icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />}
+              isMobile={true}
+            />
+          </div>
         </div>
 
         {/* Mobile Action Buttons */}
@@ -299,21 +313,11 @@ const WeatherForm = ({
             <HiOutlineSearch size={18} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
             <span>{isSearching ? "Searching..." : "Search"}</span>
           </button>
-          <VoiceSearchButton 
-            onResult={(spokenCity) => {
-              setCity(spokenCity);
-              // Auto-trigger search after voice input
-              setTimeout(() => {
-                handleSubmit({ preventDefault: () => {} }, spokenCity);
-              }, 500);
-            }} 
-            icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />} 
-          />
           <button
             type="button"
             onClick={getCurrentLocation}
             disabled={isGettingLocation}
-            className="bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             title="Get current location weather"
           >
             <FaLocationArrow size={18} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
@@ -330,6 +334,16 @@ const WeatherForm = ({
             <HiOutlineSearch size={22} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
             <span>{isSearching ? "Searching..." : "Search Weather"}</span>
           </button>
+          <VoiceSearchButton 
+            onResult={(spokenCity) => {
+              setCity(spokenCity);
+              // Auto-trigger search after voice input
+              setTimeout(() => {
+                handleSubmit({ preventDefault: () => {} }, spokenCity);
+              }, 500);
+            }} 
+            icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} 
+          />
           <button
             type="button"
             onClick={getCurrentLocation}

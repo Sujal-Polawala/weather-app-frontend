@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HiOutlineMicrophone } from "react-icons/hi";
 
-const VoiceSearchButton = ({ onResult, icon }) => {
+const VoiceSearchButton = ({ onResult, icon, isMobile = false }) => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -37,13 +37,16 @@ const VoiceSearchButton = ({ onResult, icon }) => {
     };
   };
 
+  const mobileClasses = "w-10 h-10 rounded-full";
+  const desktopClasses = "rounded-2xl px-4 py-3";
+
   return (
     <button
       type="button"
       onClick={handleVoiceSearch}
       disabled={isListening || isProcessing}
       title="Speak"
-      className={`flex items-center justify-center rounded-2xl transition-all shadow-lg border border-purple-200 bg-white/40 backdrop-blur hover:bg-purple-100/60 hover:scale-105 hover:shadow-xl hover:shadow-purple-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-400 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${isListening ? 'animate-pulse' : ''} ${isProcessing ? 'animate-spin' : ''} px-4 py-3`}
+      className={`flex items-center justify-center transition-all shadow-lg border border-purple-200 bg-white/40 backdrop-blur hover:bg-purple-100/60 hover:scale-105 hover:shadow-xl hover:shadow-purple-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-400 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${isListening ? 'animate-pulse' : ''} ${isProcessing ? 'animate-spin' : ''} ${isMobile ? mobileClasses : desktopClasses}`}
     >
       {!isListening && !isProcessing ? (
         icon ? icon : <HiOutlineMicrophone className="text-purple-600 text-lg transition-all duration-300" />
