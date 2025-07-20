@@ -183,7 +183,7 @@ const WeatherTrends = ({ history }) => {
 
       {/* 🔹 Responsive scrollable container */}
       <div className="overflow-x-auto w-full">
-        <div className="min-w-[700px] sm:min-w-full">
+        <div className="min-w-[800px] sm:min-w-full">
           <ResponsiveContainer width="100%" height={320}>
             <ComposedChart data={filteredData} margin={{ top: 30, right: 30, left: 0, bottom: 40 }}>
               <defs>
@@ -212,11 +212,18 @@ const WeatherTrends = ({ history }) => {
               <Tooltip
                 content={<CustomTooltip />}
                 cursor={{ fill: '#e0e7ff', opacity: 0.2 }}
-                position={(point, viewBox, anchor) => {
-                  // Smart positioning: if point.x is near the right edge, move tooltip to the left
-                  if (point && viewBox && point.x > viewBox.width * 0.66) {
-                    return { x: point.x - 180, y: point.y };
+                position={(point, viewBox) => {
+                  if (!point || !viewBox) return;
+                  const tooltipWidth = 180;
+                  // If near right edge, shift left
+                  if (point.x > viewBox.width - tooltipWidth) {
+                    return { x: point.x - tooltipWidth, y: point.y };
                   }
+                  // If near left edge, shift right
+                  if (point.x < tooltipWidth / 2) {
+                    return { x: point.x + 20, y: point.y };
+                  }
+                  // Default
                   return { x: point.x, y: point.y };
                 }}
                 wrapperStyle={{ zIndex: 10000 }}
