@@ -68,7 +68,9 @@ const customStyles = {
     boxShadow: state.isFocused ? "0 0 0 2px #a5b4fc" : "none",
     borderRadius: "0.75rem", // rounded-xl
     minHeight: 44,
-    hover: "cursor-pointer",
+    "&:hover": {
+      cursor: "pointer",
+    },
     fontSize: 16,
     paddingLeft: 4,
     paddingRight: 4,
