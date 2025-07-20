@@ -165,19 +165,17 @@ const WeatherTrends = ({ history }) => {
         <h2 className="text-xl font-bold mb-2 sm:mb-0">
           📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}
         </h2>
-        <div className="w-60 relative z-10">
-          <div className="w-full max-w-xs sm:w-60 relative z-10">
-            <Select
-              value={cityOptionsList.find((opt) => opt.value === selectedCity)}
-              onChange={(opt) => setSelectedCity(opt.value)}
-              options={cityOptionsList}
-              styles={customStyles}
-              isSearchable
-              menuPlacement="auto"
-              menuPosition="absolute"
-              className="w-full hover:cursor-pointer"
-            />
-          </div>
+        <div className="w-full max-w-xs sm:w-48 relative z-10 text-sm">
+          <Select
+            value={cityOptionsList.find((opt) => opt.value === selectedCity)}
+            onChange={(opt) => setSelectedCity(opt.value)}
+            options={cityOptionsList}
+            styles={customStyles}
+            isSearchable
+            menuPlacement="auto"
+            menuPosition="absolute"
+            className="w-full text-sm hover:cursor-pointer"
+          />
         </div>
       </div>
 
