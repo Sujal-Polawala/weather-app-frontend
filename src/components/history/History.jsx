@@ -222,7 +222,10 @@ const History = ({
                 <HistoryItem
                   key={item._id || index}
                   item={item}
-                  onClick={() => onHistoryItemClick(item)}
+                  onClick={() => {
+                    onHistoryItemClick(item);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   isFavorite={isFavorite(item.city)}
                   toggleFavorite={() => toggleFavorite(item)}
                   editingItem={editingItem}
