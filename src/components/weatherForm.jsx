@@ -19,6 +19,7 @@ const WeatherForm = ({
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const WeatherForm = ({
     }
 
     setLoading(true);
+    setIsSearching(true);
     try {
       console.log("Fetching weather for:", cityToFetch);
       const rawData = await fetchWeather(cityToFetch);
@@ -77,7 +79,7 @@ const WeatherForm = ({
         sunset: rawData.sunset,
       };
 
-      setWeather({ ...data, fromHistory: overrideCity !== undefined });
+      setWeather({ ...data, fromHistory: overrideCity !== undefined, isCurrentLocation: false });
       setError(null);
 
       const newEntry = {
@@ -110,6 +112,7 @@ const WeatherForm = ({
     setCity("");
     setSuggestions([]);
     setLoading(false);
+    setIsSearching(false);
   };
 
   const getCurrentLocation = async () => {
@@ -156,7 +159,6 @@ const WeatherForm = ({
         sunset: response.sunset,
       };
 
-      setWeather({ ...data, fromHistory: false });
       setError(null);
 
       const newEntry = {
@@ -171,6 +173,9 @@ const WeatherForm = ({
         (entry) => entry.city.toLowerCase() === newEntry.city.toLowerCase()
       );
 
+      // Check if this city already exists in history
+      const isFromHistory = existingIndex !== -1;
+
       if (existingIndex !== -1) {
         const updatedHistory = [...history];
         updatedHistory[existingIndex] = newEntry;
@@ -181,6 +186,9 @@ const WeatherForm = ({
 
       await saveWeatherHistory(newEntry);
       await fetchHistory();
+      
+      // Set weather with correct fromHistory flag based on whether city exists in history
+      setWeather({ ...data, fromHistory: isFromHistory, isCurrentLocation: true });
       
       toast.success(`Weather for ${data.city}, ${data.country}`);
       
@@ -265,7 +273,7 @@ const WeatherForm = ({
         className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-4 sm:p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl w-full"
       >
         {/* Search Input Container */}
-        <div className="w-full relative mb-6 flex flex-row items-center gap-2">
+        <div className="w-full relative mb-4">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
             <FaMapMarkerAlt size={20} />
           </div>
@@ -277,40 +285,50 @@ const WeatherForm = ({
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
             onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-xl p-4 pl-12 pr-20 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+            className="w-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-lg sm:text-xl p-4 pl-12 pr-4 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
           />
-          {/* On small screens, show search icon button before voice icon */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-row gap-2 items-center">
-            <button
-              type="submit"
-              className="flex sm:hidden items-center justify-center rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400"
-              tabIndex={-1}
-              style={{ boxShadow: '0 4px 16px 0 rgba(80, 80, 200, 0.15)' }}
-            >
-              <HiOutlineSearch size={26} className="text-white drop-shadow" />
-            </button>
-            <VoiceSearchButton onResult={(spokenCity) => setCity(spokenCity)} icon={<HiOutlineMicrophone className="text-purple-600 text-xl" />} />
-            <button
-              type="button"
-              onClick={getCurrentLocation}
-              disabled={isGettingLocation}
-              className="flex items-center justify-center rounded-full p-2 shadow-lg border border-white/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 disabled:opacity-50 disabled:cursor-not-allowed"
-              tabIndex={-1}
-              style={{ boxShadow: '0 4px 16px 0 rgba(80, 80, 200, 0.15)' }}
-              title="Get current location weather"
-            >
-              <FaLocationArrow size={26} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
+        </div>
+
+        {/* Mobile Action Buttons */}
+        <div className="flex sm:hidden gap-3 mb-4">
+          <button
+            type="submit"
+            disabled={isSearching}
+            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <HiOutlineSearch size={18} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
+            <span>{isSearching ? "Searching..." : "Search"}</span>
+          </button>
+          <VoiceSearchButton 
+            onResult={(spokenCity) => {
+              setCity(spokenCity);
+              // Auto-trigger search after voice input
+              setTimeout(() => {
+                handleSubmit({ preventDefault: () => {} }, spokenCity);
+              }, 500);
+            }} 
+            icon={<HiOutlineMicrophone className="text-purple-600 text-lg" />} 
+          />
+          <button
+            type="button"
+            onClick={getCurrentLocation}
+            disabled={isGettingLocation}
+            className="bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Get current location weather"
+          >
+            <FaLocationArrow size={18} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
+            <span>{isGettingLocation ? "Getting..." : "Location"}</span>
+          </button>
         </div>
         {/* Search and Location Buttons */}
         <div className="hidden sm:flex gap-4">
           <button
             type="submit"
-            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer"
+            disabled={isSearching}
+            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-3 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <HiOutlineSearch size={22} className="text-white drop-shadow" />
-            <span>Search Weather</span>
+            <HiOutlineSearch size={22} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
+            <span>{isSearching ? "Searching..." : "Search Weather"}</span>
           </button>
           <button
             type="button"

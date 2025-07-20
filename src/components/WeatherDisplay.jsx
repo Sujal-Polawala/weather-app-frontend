@@ -124,6 +124,13 @@ const WeatherDisplay = ({ weather, error, onClose, fromHistory }) => {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-gray-800 drop-shadow-lg mb-2">
             {weather.city}
           </h2>
+          {weather.isCurrentLocation && (
+            <div className="flex justify-center mb-2">
+              <span className="inline-flex items-center gap-1 bg-green-500/90 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                📍 {weather.fromHistory ? 'Current Location (from history)' : 'Current Location'}
+              </span>
+            </div>
+          )}
           <p className="text-gray-600 text-lg sm:text-xl">
             {weather.state ? `${weather.state}, ` : ""}{weather.country}
           </p>
