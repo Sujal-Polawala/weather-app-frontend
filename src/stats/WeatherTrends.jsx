@@ -60,6 +60,63 @@ const CustomLegend = ({ payload, avgTemp }) => {
   );
 };
 
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "#fff",
+    borderColor: state.isFocused ? "#6366f1" : "#e0e7ef",
+    boxShadow: state.isFocused ? "0 0 0 2px #a5b4fc" : "none",
+    borderRadius: "0.75rem", // rounded-xl
+    minHeight: 44,
+    fontSize: 16,
+    paddingLeft: 4,
+    paddingRight: 4,
+    "&:hover": {
+      borderColor: "#6366f1",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    borderRadius: "0.75rem",
+    backgroundColor: "#fff",
+    boxShadow: "0 8px 32px 0 rgba(80,80,200,0.10)",
+    maxHeight: 200,
+    overflowY: "auto",
+    fontSize: 16,
+    zIndex: 50,
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "#6366f1"
+      : state.isFocused
+      ? "#e0e7ff"
+      : "#fff",
+    color: state.isSelected ? "#fff" : "#334155",
+    fontWeight: state.isSelected ? 700 : 500,
+    cursor: "pointer",
+    padding: "10px 16px",
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#334155",
+    fontWeight: 600,
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    color: state.isFocused ? "#6366f1" : "#64748b",
+    "&:hover": { color: "#6366f1" },
+  }),
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: "#334155",
+    fontWeight: 600,
+  }),
+};
+
 const WeatherTrends = ({ history }) => {
   const [selectedCity, setSelectedCity] = useState("All");
 
@@ -107,22 +164,11 @@ const WeatherTrends = ({ history }) => {
             value={cityOptionsList.find((opt) => opt.value === selectedCity)}
             onChange={(opt) => setSelectedCity(opt.value)}
             options={cityOptionsList}
-            styles={{
-              menu: (provided) => ({
-                ...provided,
-                maxHeight: 200, // ~5-6 items
-                overflowY: "auto",
-              }),
-              control: (provided) => ({
-                ...provided,
-                minHeight: 40,
-                borderRadius: 8,
-                fontSize: 16,
-              }),
-            }}
+            styles={customStyles}
             isSearchable
             menuPlacement="auto"
             menuPosition="fixed"
+            className="w-60"
           />
         </div>
       </div>
