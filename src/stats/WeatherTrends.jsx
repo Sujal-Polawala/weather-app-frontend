@@ -80,10 +80,14 @@ const customStyles = {
     borderRadius: "0.75rem",
     backgroundColor: "#fff",
     boxShadow: "0 8px 32px 0 rgba(80,80,200,0.10)",
-    maxHeight: 200,
-    overflowY: "auto",
     fontSize: 16,
     zIndex: 50,
+    // Removed maxHeight and overflowY from menu
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    maxHeight: 200,
+    overflowY: "auto",
   }),
   option: (provided, state) => ({
     ...provided,
@@ -168,7 +172,7 @@ const WeatherTrends = ({ history }) => {
             isSearchable
             menuPlacement="auto"
             menuPosition="absolute"
-            className="w-60"
+            className="w-60 hover:cursor-pointer"
           />
         </div>
       </div>
