@@ -192,23 +192,15 @@ const History = ({
 
   // Effect to display weather data for updated city after history updates
   useEffect(() => {
-    const fetchAndSetWeather = async () => {
-      if (pendingUpdatedCity && history && history.length > 0) {
-        const updatedItem = history.find(
-          (entry) => entry.city && entry.city.toLowerCase() === pendingUpdatedCity.toLowerCase()
-        );
-        if (updatedItem && onHistoryItemClick) {
-          try {
-            const weatherData = await fetchWeather(updatedItem.city);
-            onHistoryItemClick({ ...weatherData, fromHistory: true });
-          } catch (err) {
-            // Optionally handle error
-          }
-          setPendingUpdatedCity("");
-        }
+    if (pendingUpdatedCity && history && history.length > 0) {
+      const updatedItem = history.find(
+        (entry) => entry.city && entry.city.toLowerCase() === pendingUpdatedCity.toLowerCase()
+      );
+      if (updatedItem && onHistoryItemClick) {
+        onHistoryItemClick(updatedItem);
+        setPendingUpdatedCity("");
       }
-    };
-    fetchAndSetWeather();
+    }
   }, [history, pendingUpdatedCity, onHistoryItemClick]);
 
   return (
