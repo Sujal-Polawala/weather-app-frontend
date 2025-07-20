@@ -15,8 +15,6 @@ const History = ({
   fetchHistory,
   onHistoryItemClick,
   setWeather,
-  weatherDisplayRef,
-  favoriteCitiesRef,
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -196,9 +194,7 @@ const History = ({
             favorites={favorites}
             onClick={(fav) => {
               onHistoryItemClick(fav);
-              if (favoriteCitiesRef?.current) {
-                favoriteCitiesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onRemove={removeFavorite}
           />
@@ -228,9 +224,7 @@ const History = ({
                   item={item}
                   onClick={() => {
                     onHistoryItemClick(item);
-                    if (weatherDisplayRef?.current) {
-                      weatherDisplayRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   isFavorite={isFavorite(item.city)}
                   toggleFavorite={() => toggleFavorite(item)}
