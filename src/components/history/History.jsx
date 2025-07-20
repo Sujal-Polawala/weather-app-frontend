@@ -15,6 +15,8 @@ const History = ({
   fetchHistory,
   onHistoryItemClick,
   setWeather,
+  weatherDisplayRef,
+  favoriteCitiesRef,
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -22,6 +24,7 @@ const History = ({
   const [favorites, setFavorites] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [pendingUpdatedCity, setPendingUpdatedCity] = useState("");
 
   const visibleHistory = showAll ? history : history.slice(0, 5);
 
@@ -153,18 +156,10 @@ const History = ({
       ));
       setEditingItem(null);
       setUpdatedCity("");
-      const newHistory = await fetchHistory();
+      await fetchHistory();
       // Scroll to top after edit
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Display weather data for the updated city
-      if (onHistoryItemClick && newHistory) {
-        const updatedItem = newHistory.find(
-          (entry) => entry.city && entry.city.toLowerCase() === updatedCity.toLowerCase()
-        );
-        if (updatedItem) {
-          onHistoryItemClick(updatedItem);
-        }
-      }
+      setPendingUpdatedCity(updatedCity);
     } catch (err) {
       console.error("Error updating:", err);
       toast.error("Failed to update city");
@@ -193,6 +188,19 @@ const History = ({
       </div>
     ));
   };
+
+  // Effect to display weather data for updated city after history updates
+  useEffect(() => {
+    if (pendingUpdatedCity && history && history.length > 0) {
+      const updatedItem = history.find(
+        (entry) => entry.city && entry.city.toLowerCase() === pendingUpdatedCity.toLowerCase()
+      );
+      if (updatedItem && onHistoryItemClick) {
+        onHistoryItemClick(updatedItem);
+        setPendingUpdatedCity("");
+      }
+    }
+  }, [history, pendingUpdatedCity, onHistoryItemClick]);
 
   return (
     <>
