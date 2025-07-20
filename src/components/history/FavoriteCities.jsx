@@ -22,7 +22,10 @@ const FavoriteCities = ({ favorites, onClick, onRemove }) => {
                 <span className="text-2xl sm:text-3xl select-none flex-shrink-0">
                   {getSuggestionIcon(fav.city)}
                 </span>
-                <div className="flex-1 min-w-0" onClick={() => onClick(fav)}>
+                <div className="flex-1 min-w-0" onClick={() => {
+                  onClick(fav);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}>
                   <span className="block font-semibold text-base sm:text-lg text-gray-800 break-words group-hover:text-blue-700">
                     {fav.city}
                   </span>

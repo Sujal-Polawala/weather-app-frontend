@@ -76,6 +76,7 @@ const HistoryItem = ({
               title="Save Changes"
               onClick={() => {
                 onUpdate(item._id);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="text-green-500 hover:text-green-300 text-sm font-medium hover:cursor-pointer"
             >
@@ -83,7 +84,10 @@ const HistoryItem = ({
             </button>
             <button
               title="Cancel Edit"
-              onClick={handleCancel}
+              onClick={(e) => {
+                handleCancel(e);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="text-red-400 hover:text-red-600 text-sm font-medium hover:cursor-pointer"
             >
               Cancel
