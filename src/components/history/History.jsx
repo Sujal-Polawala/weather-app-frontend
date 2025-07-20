@@ -156,6 +156,10 @@ const History = ({
       fetchHistory();
       // Scroll to top after edit
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Display weather data for the updated city
+      if (onHistoryItemClick) {
+        onHistoryItemClick({ city: updatedCity });
+      }
     } catch (err) {
       console.error("Error updating:", err);
       toast.error("Failed to update city");
