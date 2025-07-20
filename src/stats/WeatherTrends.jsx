@@ -182,8 +182,8 @@ const WeatherTrends = ({ history }) => {
       </div>
 
       {/* 🔹 Responsive scrollable container */}
-      <div className="overflow-x-auto w-full">
-        <div className="min-w-[800px] sm:min-w-full">
+      <div className="overflow-x-auto w-full your-chart-container-class">
+        <div className={`${selectedCity === 'All' ? 'min-w-[800px]' : 'min-w-0 w-full'} sm:min-w-full`}>
           <ResponsiveContainer width="100%" height={320}>
             <ComposedChart data={filteredData} margin={{ top: 30, right: 30, left: 0, bottom: 40 }}>
               <defs>
@@ -215,16 +215,14 @@ const WeatherTrends = ({ history }) => {
                 position={(point, viewBox) => {
                   if (!point || !viewBox) return;
                   const tooltipWidth = 180;
-                  // If near right edge, shift left
-                  if (point.x > viewBox.width - tooltipWidth) {
-                    return { x: point.x - tooltipWidth, y: point.y };
-                  }
-                  // If near left edge, shift right
-                  if (point.x < tooltipWidth / 2) {
-                    return { x: point.x + 20, y: point.y };
-                  }
-                  // Default
-                  return { x: point.x, y: point.y };
+                  // Get the visible width of the chart container
+                  const container = document.querySelector('.your-chart-container-class');
+                  const visibleWidth = container ? container.offsetWidth : viewBox.width;
+                  // Clamp x so tooltip stays within visible area
+                  let x = point.x;
+                  if (x < 10) x = 10;
+                  if (x + tooltipWidth > visibleWidth) x = visibleWidth - tooltipWidth - 10;
+                  return { x, y: point.y };
                 }}
                 wrapperStyle={{ zIndex: 10000 }}
               />
