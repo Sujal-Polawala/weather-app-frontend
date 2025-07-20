@@ -139,17 +139,6 @@ const History = ({
 
   const handleUpdate = async (id) => {
     try {
-      // Validate city name before updating
-      let valid = true;
-      try {
-        await fetchWeather(updatedCity);
-      } catch (err) {
-        valid = false;
-      }
-      if (!valid) {
-        toast.error("City not found or invalid. Please enter a valid city name.");
-        return;
-      }
       await updateWeatherHistoryItem(id, updatedCity);
       toast.custom((t) => (
         <div
@@ -176,6 +165,7 @@ const History = ({
     } catch (err) {
       console.error("Error updating:", err);
       toast.error("Failed to update city");
+      // Do NOT update local state or fetch history here
     }
   };
 
