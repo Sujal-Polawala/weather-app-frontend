@@ -20,4 +20,3 @@ const HistorySkeleton = () => {
 };
 
 export default HistorySkeleton;
-  
