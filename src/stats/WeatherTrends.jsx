@@ -166,16 +166,18 @@ const WeatherTrends = ({ history }) => {
           📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}
         </h2>
         <div className="w-60 relative z-10">
-          <Select
-            value={cityOptionsList.find((opt) => opt.value === selectedCity)}
-            onChange={(opt) => setSelectedCity(opt.value)}
-            options={cityOptionsList}
-            styles={customStyles}
-            isSearchable
-            menuPlacement="auto"
-            menuPosition="absolute"
-            className="w-60 hover:cursor-pointer"
-          />
+          <div className="w-full max-w-xs sm:w-60 relative z-10">
+            <Select
+              value={cityOptionsList.find((opt) => opt.value === selectedCity)}
+              onChange={(opt) => setSelectedCity(opt.value)}
+              options={cityOptionsList}
+              styles={customStyles}
+              isSearchable
+              menuPlacement="auto"
+              menuPosition="absolute"
+              className="w-full hover:cursor-pointer"
+            />
+          </div>
         </div>
       </div>
 
@@ -207,7 +209,18 @@ const WeatherTrends = ({ history }) => {
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#e0e7ff', opacity: 0.2 }} />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: '#e0e7ff', opacity: 0.2 }}
+                position={(point, viewBox, anchor) => {
+                  // Smart positioning: if point.x is near the right edge, move tooltip to the left
+                  if (point && viewBox && point.x > viewBox.width * 0.66) {
+                    return { x: point.x - 180, y: point.y };
+                  }
+                  return { x: point.x, y: point.y };
+                }}
+                wrapperStyle={{ zIndex: 10000 }}
+              />
               <Legend
                 content={(props) => (
                   <CustomLegend {...props} avgTemp={avgTemp} />
