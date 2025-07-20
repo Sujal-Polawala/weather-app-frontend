@@ -6,6 +6,7 @@ import useWeatherHistory from "../hook/useWeatherHistory.jsx";
 import WeatherSkeleton from "../skeleton/weatherSkeleton.jsx";
 import HistorySkeleton from "../skeleton/HistorySkeleton.jsx";
 import WeatherTrends from "../stats/WeatherTrends.jsx";
+import { fetchWeather } from "../api/weatherApi.jsx";
 
 const Home = () => {
   const [weather, setWeather] = useState(null);
@@ -64,8 +65,13 @@ const Home = () => {
     setFromHistory(true);
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      setWeather(historyItem);
+      let weatherData = historyItem;
+      // If item does not have temperature or description, fetch weather
+      if (!historyItem.temperature || !historyItem.description) {
+        const cityQuery = historyItem.city && historyItem.country ? `${historyItem.city},${historyItem.country}` : historyItem.city;
+        weatherData = await fetchWeather(cityQuery);
+      }
+      setWeather(weatherData);
       setError(null);
     } catch (err) {
       setError("Failed to load data.");
