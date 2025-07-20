@@ -8,6 +8,7 @@ import {
 import { toast } from "react-hot-toast";
 import ConfirmModel from "../../Confirmation/ConfirmationModel.jsx";
 import { FaHistory, FaHeart, FaTrash, FaEdit } from "react-icons/fa";
+import { fetchWeather } from "../../api/weatherApi.jsx";
 
 const History = ({
   history,
@@ -191,15 +192,23 @@ const History = ({
 
   // Effect to display weather data for updated city after history updates
   useEffect(() => {
-    if (pendingUpdatedCity && history && history.length > 0) {
-      const updatedItem = history.find(
-        (entry) => entry.city && entry.city.toLowerCase() === pendingUpdatedCity.toLowerCase()
-      );
-      if (updatedItem && onHistoryItemClick) {
-        onHistoryItemClick(updatedItem);
-        setPendingUpdatedCity("");
+    const fetchAndSetWeather = async () => {
+      if (pendingUpdatedCity && history && history.length > 0) {
+        const updatedItem = history.find(
+          (entry) => entry.city && entry.city.toLowerCase() === pendingUpdatedCity.toLowerCase()
+        );
+        if (updatedItem && onHistoryItemClick) {
+          try {
+            const weatherData = await fetchWeather(updatedItem.city);
+            onHistoryItemClick({ ...weatherData, fromHistory: true });
+          } catch (err) {
+            // Optionally handle error
+          }
+          setPendingUpdatedCity("");
+        }
       }
-    }
+    };
+    fetchAndSetWeather();
   }, [history, pendingUpdatedCity, onHistoryItemClick]);
 
   return (
