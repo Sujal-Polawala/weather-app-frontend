@@ -112,8 +112,11 @@ const WeatherTrends = ({ history }) => {
                 dataKey="label"
                 stroke="#000000"
                 interval={0}
-                angle={0}
-                textAnchor="end"
+                angle={40}
+                textAnchor="start"
+                height={60}
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => value.length > 10 ? value.slice(0, 10) + '…' : value}
               />
               <YAxis stroke="#000000" />
               <Tooltip content={<CustomTooltip />} />

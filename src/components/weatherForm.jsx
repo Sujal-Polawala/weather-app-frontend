@@ -303,7 +303,7 @@ const WeatherForm = ({
               />
               <button
                 type="submit"
-                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
                 style={{ zIndex: 2 }}
                 tabIndex={0}
                 title="Search Weather"
