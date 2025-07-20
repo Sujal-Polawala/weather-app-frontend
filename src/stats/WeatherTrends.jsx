@@ -159,7 +159,7 @@ const WeatherTrends = ({ history }) => {
         <h2 className="text-xl font-bold mb-2 sm:mb-0">
           📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}
         </h2>
-        <div className="w-60">
+        <div className="w-60 relative z-10">
           <Select
             value={cityOptionsList.find((opt) => opt.value === selectedCity)}
             onChange={(opt) => setSelectedCity(opt.value)}
@@ -167,7 +167,7 @@ const WeatherTrends = ({ history }) => {
             styles={customStyles}
             isSearchable
             menuPlacement="auto"
-            menuPosition="fixed"
+            menuPosition="absolute"
             className="w-60"
           />
         </div>
