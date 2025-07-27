@@ -18,49 +18,18 @@ const Home = () => {
   const { history, setHistory, fetchHistory, loadingHistory } =
     useWeatherHistory();
 
-  // const getBackgroundClass = (weather) => {
-  //   if (!weather || !weather.description) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-[#41545d] via-[#334348] to-[#3f5964]",
-  //       // bg: "bg-gradient-to-br from-[#0F2027] via-[#203A43] to-[#2C5364]",
-  //       text: "text-white",
-  //     };
-  //   }
-
-  //   const condition = weather.description.toLowerCase();
-
-  //   if (condition.includes("clear") || condition.includes("sunny")) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-yellow-100 via-yellow-300 to-orange-200",
-  //       text: "text-black",
-  //     };
-  //   } else if (condition.includes("cloud")) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-gray-100 via-gray-300 to-gray-400",
-  //       text: "text-black",
-  //     };
-  //   } else if (condition.includes("rain")) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500",
-  //       text: "text-black",
-  //     };
-  //   } else if (condition.includes("snow")) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-white via-sky-100 to-blue-100",
-  //       text: "text-black",
-  //     };
-  //   } else if (condition.includes("storm") || condition.includes("thunder")) {
-  //     return {
-  //       bg: "bg-gradient-to-br from-indigo-900 via-gray-900 to-black",
-  //       text: "text-white",
-  //     };
-  //   } else {
-  //     return {
-  //       bg: "bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900",
-  //       text: "text-white",
-  //     };
-  //   }
-  // };
+  const updateHistoryOrder = (clickedCity) => {
+    const reordered = [
+      clickedCity,
+      ...history.filter(
+        (item) =>
+          item.city.toLowerCase() !== clickedCity.city.toLowerCase() ||
+          item.country?.toLowerCase() !== clickedCity.country?.toLowerCase()
+      ),
+    ];
+    setHistory(reordered);
+    localStorage.setItem("weatherSearchHistory", JSON.stringify(reordered));
+  };
 
   const handleHistoryItemClick = async (historyItem) => {
     setFromHistory(true);
@@ -76,6 +45,8 @@ const Home = () => {
 
       setWeather(weatherData);
       setError(null);
+
+      updateHistoryOrder(historyItem);
     } catch (err) {
       setError("Failed to load today's weather data.");
     } finally {
