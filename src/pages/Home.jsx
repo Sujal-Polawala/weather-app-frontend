@@ -66,18 +66,21 @@ const Home = () => {
     setFromHistory(true);
     setLoading(true);
     try {
-      let weatherData = historyItem;
-      // Always fetch weather if missing temperature/description
-      if (!historyItem.temperature || !historyItem.description) {
-        const cityQuery = historyItem.city && historyItem.country ? `${historyItem.city},${historyItem.country}` : historyItem.city;
-        weatherData = await fetchWeather(cityQuery);
-      }
+      const cityQuery =
+        historyItem.city && historyItem.country
+          ? `${historyItem.city},${historyItem.country}`
+          : historyItem.city;
+
+      // Always fetch the latest data
+      const weatherData = await fetchWeather(cityQuery);
+
       setWeather(weatherData);
       setError(null);
     } catch (err) {
-      setError("Failed to load data.");
+      setError("Failed to load today's weather data.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Effect to fetch weather for updated city after history changes
