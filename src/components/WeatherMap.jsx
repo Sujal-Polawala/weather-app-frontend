@@ -1,54 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { HiOutlineMapPin, HiOutlineInformationCircle } from 'react-icons/hi';
 import { fetchWeather } from '../api/weatherApi';
 import toast from 'react-hot-toast';
-import 'leaflet/dist/leaflet.css';
-
-// Fix for default markers in react-leaflet
-import L from 'leaflet';
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
-// Custom marker icon
-const customIcon = new L.Icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-// Weather marker icon
-const weatherIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDkuNzRMMTIgMTZMMTAuOTEgOS43NEw0IDlMMTAuOTEgOC4yNkwxMiAyWiIgZmlsbD0iI0ZGRkZGRiIvPgo8L3N2Zz4K',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
-  popupAnchor: [0, -15]
-});
-
-// Map click handler component
-const MapClickHandler = ({ onCityClick }) => {
-  const map = useMap();
-  
-  useEffect(() => {
-    const handleClick = (e) => {
-      const { lat, lng } = e.latlng;
-      // Reverse geocoding would be needed here to get city name from coordinates
-      // For now, we'll use a simple approach
-      onCityClick({ lat, lng });
-    };
-    
-    map.on('click', handleClick);
-    return () => map.off('click', handleClick);
-  }, [map, onCityClick]);
-  
-  return null;
-};
 
 const WeatherMap = ({ onWeatherSelect }) => {
   const [weatherMarkers, setWeatherMarkers] = useState([]);
@@ -57,16 +10,16 @@ const WeatherMap = ({ onWeatherSelect }) => {
 
   // Sample major cities with coordinates
   const majorCities = [
-    { name: 'New York', lat: 40.7128, lng: -74.0060 },
-    { name: 'London', lat: 51.5074, lng: -0.1278 },
-    { name: 'Tokyo', lat: 35.6762, lng: 139.6503 },
-    { name: 'Paris', lat: 48.8566, lng: 2.3522 },
-    { name: 'Moscow', lat: 55.7558, lng: 37.6176 },
-    { name: 'Sydney', lat: -33.8688, lng: 151.2093 },
-    { name: 'Dubai', lat: 25.2048, lng: 55.2708 },
-    { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
-    { name: 'Beijing', lat: 39.9042, lng: 116.4074 },
-    { name: 'Rio de Janeiro', lat: -22.9068, lng: -43.1729 }
+    { name: 'New York', lat: 40.7128, lng: -74.0060, x: 20, y: 30 },
+    { name: 'London', lat: 51.5074, lng: -0.1278, x: 50, y: 25 },
+    { name: 'Tokyo', lat: 35.6762, lng: 139.6503, x: 85, y: 35 },
+    { name: 'Paris', lat: 48.8566, lng: 2.3522, x: 52, y: 28 },
+    { name: 'Moscow', lat: 55.7558, lng: 37.6176, x: 65, y: 20 },
+    { name: 'Sydney', lat: -33.8688, lng: 151.2093, x: 85, y: 70 },
+    { name: 'Dubai', lat: 25.2048, lng: 55.2708, x: 70, y: 45 },
+    { name: 'Mumbai', lat: 19.0760, lng: 72.8777, x: 75, y: 50 },
+    { name: 'Beijing', lat: 39.9042, lng: 116.4074, x: 80, y: 30 },
+    { name: 'Rio de Janeiro', lat: -22.9068, lng: -43.1729, x: 25, y: 65 }
   ];
 
   const handleCityClick = async (city) => {
@@ -89,21 +42,6 @@ const WeatherMap = ({ onWeatherSelect }) => {
     }
   };
 
-  const handleMapClick = async (coords) => {
-    // In a real app, you'd use reverse geocoding here
-    // For demo purposes, we'll use a nearby major city
-    const nearestCity = majorCities.reduce((nearest, city) => {
-      const distance = Math.sqrt(
-        Math.pow(city.lat - coords.lat, 2) + Math.pow(city.lng - coords.lng, 2)
-      );
-      return distance < nearest.distance ? { ...city, distance } : nearest;
-    }, { distance: Infinity });
-
-    if (nearestCity.name) {
-      await handleCityClick(nearestCity);
-    }
-  };
-
   const getWeatherIcon = (description) => {
     const desc = description.toLowerCase();
     if (desc.includes('rain')) return '🌧️';
@@ -123,7 +61,7 @@ const WeatherMap = ({ onWeatherSelect }) => {
         
         <div className="mb-6">
           <p className="text-gray-600 text-center mb-4">
-            Click on a city marker or anywhere on the map to view weather information
+            Click on a city marker or use the quick city buttons to view weather information
           </p>
           
           {/* Quick City Buttons */}
@@ -141,68 +79,91 @@ const WeatherMap = ({ onWeatherSelect }) => {
           </div>
         </div>
 
-        {/* Map Container */}
-        <div className="h-96 rounded-2xl overflow-hidden shadow-lg">
-          <MapContainer
-            center={[20, 0]}
-            zoom={2}
-            style={{ height: '100%', width: '100%' }}
-            className="rounded-2xl"
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            
-            <MapClickHandler onCityClick={handleMapClick} />
-            
-            {/* Weather Markers */}
-            {weatherMarkers.map((marker) => (
-              <Marker
-                key={marker.id}
-                position={marker.position}
-                icon={weatherIcon}
-              >
-                <Popup className="weather-popup">
-                  <div className="text-center p-2">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">
-                      {marker.city}
-                    </h3>
-                    <div className="text-3xl mb-2">
-                      {getWeatherIcon(marker.weather.description)}
-                    </div>
-                    <div className="text-2xl font-bold text-gray-800 mb-1">
-                      {Math.round(marker.weather.temperature)}°C
-                    </div>
-                    <div className="text-gray-600 text-sm capitalize mb-3">
-                      {marker.weather.description}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div>
-                        <span className="text-gray-500">Humidity:</span>
-                        <br />
-                        <span className="font-semibold">{marker.weather.humidity}%</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Wind:</span>
-                        <br />
-                        <span className="font-semibold">{marker.weather.windSpeed} km/h</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setSelectedWeather(marker.weather);
-                        if (onWeatherSelect) onWeatherSelect(marker.weather);
-                      }}
-                      className="mt-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+        {/* SVG World Map */}
+        <div className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-6 mb-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">World Weather Map</h3>
+          <div className="relative w-full h-96 bg-gradient-to-br from-blue-50 to-green-50 rounded-xl overflow-hidden">
+            {/* Simple SVG World Map */}
+            <svg
+              viewBox="0 0 100 100"
+              className="w-full h-full"
+              style={{ background: 'linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%)' }}
+            >
+              {/* Simplified continents */}
+              <path
+                d="M 10 30 Q 15 25 20 30 Q 25 35 30 30 Q 35 25 40 30 Q 45 35 50 30 Q 55 25 60 30 Q 65 35 70 30 Q 75 25 80 30 Q 85 35 90 30"
+                fill="#4ade80"
+                stroke="#22c55e"
+                strokeWidth="0.5"
+              />
+              <path
+                d="M 15 50 Q 25 45 35 50 Q 45 55 55 50 Q 65 45 75 50 Q 85 55 90 50"
+                fill="#4ade80"
+                stroke="#22c55e"
+                strokeWidth="0.5"
+              />
+              <path
+                d="M 20 70 Q 30 65 40 70 Q 50 75 60 70 Q 70 65 80 70"
+                fill="#4ade80"
+                stroke="#22c55e"
+                strokeWidth="0.5"
+              />
+              
+              {/* City Markers */}
+              {majorCities.map((city) => (
+                <g key={city.name}>
+                  <circle
+                    cx={city.x}
+                    cy={city.y}
+                    r="1.5"
+                    fill="#3b82f6"
+                    stroke="#1d4ed8"
+                    strokeWidth="0.3"
+                    className="cursor-pointer hover:r-2 transition-all duration-300"
+                    onClick={() => handleCityClick(city)}
+                  />
+                  <text
+                    x={city.x + 2}
+                    y={city.y}
+                    fontSize="2"
+                    fill="#1e40af"
+                    className="pointer-events-none"
+                  >
+                    {city.name}
+                  </text>
+                </g>
+              ))}
+              
+              {/* Weather Markers */}
+              {weatherMarkers.map((marker) => {
+                const city = majorCities.find(c => c.name === marker.city);
+                if (!city) return null;
+                
+                return (
+                  <g key={marker.id}>
+                    <circle
+                      cx={city.x}
+                      cy={city.y}
+                      r="2"
+                      fill="#ef4444"
+                      stroke="#dc2626"
+                      strokeWidth="0.5"
+                      className="animate-pulse"
+                    />
+                    <text
+                      x={city.x + 2}
+                      y={city.y - 2}
+                      fontSize="2.5"
+                      fill="#dc2626"
+                      className="pointer-events-none"
                     >
-                      View Details
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+                      {getWeatherIcon(marker.weather.description)}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
         </div>
 
         {/* Selected Weather Details */}
@@ -252,6 +213,55 @@ const WeatherMap = ({ onWeatherSelect }) => {
                   <span className="font-semibold">{selectedWeather.city}</span>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Weather Markers List */}
+        {weatherMarkers.length > 0 && (
+          <div className="mt-6 bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Weather Markers</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {weatherMarkers.map((marker) => (
+                <div
+                  key={marker.id}
+                  className="bg-gradient-to-br from-white/80 to-blue-50/80 border border-blue-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-800">{marker.city}</h4>
+                    <div className="text-2xl">
+                      {getWeatherIcon(marker.weather.description)}
+                    </div>
+                  </div>
+                  <div className="text-center mb-3">
+                    <div className="text-xl font-bold text-gray-800">
+                      {Math.round(marker.weather.temperature)}°C
+                    </div>
+                    <div className="text-sm text-gray-600 capitalize">
+                      {marker.weather.description}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="text-center">
+                      <div className="text-gray-500">Humidity</div>
+                      <div className="font-semibold">{marker.weather.humidity}%</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-500">Wind</div>
+                      <div className="font-semibold">{marker.weather.windSpeed} km/h</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedWeather(marker.weather);
+                      if (onWeatherSelect) onWeatherSelect(marker.weather);
+                    }}
+                    className="w-full mt-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                  >
+                    View Details
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
