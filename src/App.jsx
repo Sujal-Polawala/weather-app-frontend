@@ -4,38 +4,45 @@ import Home from "./pages/Home";
 import MultiCityComparison from "./components/MultiCityComparison";
 import "./index.css";
 import { Toaster } from "react-hot-toast";
+import { HiOutlineViewGrid, HiOutlineHome } from "react-icons/hi";
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
 
   return (
     <WeatherProvider>
-      <div className="min-h-screen bg-gradient-to-tr from-blue-400 via-purple-300 to-cyan-200 animate-gradient-x">
-        {/* Navigation */}
-        <nav className="bg-white/10 backdrop-blur-lg border-b border-white/20 p-4">
-          <div className="max-w-7xl mx-auto flex justify-center gap-4">
-            <button
-              onClick={() => setCurrentView('home')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                currentView === 'home'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              🌤️ Weather App
-            </button>
-            <button
-              onClick={() => setCurrentView('comparison')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                currentView === 'comparison'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              🌍 Multi-City Comparison
-            </button>
+      <div className="min-h-screen bg-gradient-to-tr from-blue-400 via-purple-300 to-cyan-200 animate-gradient-x relative">
+        {/* Floating Navigation */}
+        <div className="fixed top-6 right-6 z-50">
+          <div className="bg-white/20 backdrop-blur-lg border border-white/30 rounded-2xl p-2 shadow-2xl">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentView('home')}
+                className={`p-3 rounded-xl transition-all duration-300 flex items-center gap-2 ${
+                  currentView === 'home'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                    : 'bg-white/30 text-white hover:bg-white/40'
+                }`}
+                title="Weather App"
+              >
+                <HiOutlineHome size={20} />
+                <span className="hidden sm:inline text-sm font-medium">Weather</span>
+              </button>
+              <button
+                onClick={() => setCurrentView('comparison')}
+                className={`p-3 rounded-xl transition-all duration-300 flex items-center gap-2 ${
+                  currentView === 'comparison'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                    : 'bg-white/30 text-white hover:bg-white/40'
+                }`}
+                title="Multi-City Comparison"
+              >
+                <HiOutlineViewGrid size={20} />
+                <span className="hidden sm:inline text-sm font-medium">Compare</span>
+              </button>
+            </div>
           </div>
-        </nav>
+        </div>
 
         {/* Content */}
         {currentView === 'home' ? (
@@ -49,7 +56,9 @@ function App() {
             </div>
           </div>
         ) : (
-          <MultiCityComparison />
+          <div className="pt-20 px-4 sm:px-6">
+            <MultiCityComparison />
+          </div>
         )}
         
         <Toaster
