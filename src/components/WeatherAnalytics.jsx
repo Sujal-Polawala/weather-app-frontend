@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HiOutlineChartBar, HiOutlineDownload, HiOutlineTrendingUp, HiOutlineTrendingDown, HiOutlineFire, HiOutlineSnowflake } from 'react-icons/hi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { format, subDays, startOfWeek, endOfWeek } from 'date-fns';
+import { format, subDays } from 'date-fns';
 
 const WeatherAnalytics = ({ history }) => {
   const [analyticsData, setAnalyticsData] = useState(null);

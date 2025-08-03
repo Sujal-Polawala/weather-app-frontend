@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HiOutlineCalendar, HiOutlineClock, HiOutlineSun, HiOutlineCloud, HiOutlineCloudRain } from 'react-icons/hi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { format, addHours, addDays, parseISO } from 'date-fns';
+import { format, addHours, addDays } from 'date-fns';
 
 const WeatherForecast = ({ city, currentWeather }) => {
   const [forecastData, setForecastData] = useState(null);
