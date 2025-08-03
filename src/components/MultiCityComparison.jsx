@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineMicrophone } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch } from 'react-icons/hi';
 import { fetchWeather } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
+import VoiceSearchButton from './VoiceSearchButton';
 import toast from 'react-hot-toast';
 
 const MultiCityComparison = () => {
@@ -10,8 +11,6 @@ const MultiCityComparison = () => {
   const [newCity, setNewCity] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const formRef = useRef(null);
 
   // City suggestions effect
@@ -74,42 +73,11 @@ const MultiCityComparison = () => {
     addCity(selectedCity);
   };
 
-  const handleVoiceSearch = () => {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      toast.error('Speech recognition not supported in this browser');
-      return;
-    }
-
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    setIsListening(true);
-    recognition.start();
-
-    recognition.onresult = (event) => {
-      const spokenText = event.results[0][0].transcript;
-      setIsListening(false);
-      setIsProcessing(true);
-      setNewCity(spokenText);
-      
-      setTimeout(() => {
-        addCity(spokenText);
-        setIsProcessing(false);
-      }, 1000);
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-      setIsListening(false);
-      setIsProcessing(false);
-      toast.error('Voice recognition failed');
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
+  const handleVoiceResult = (spokenText) => {
+    setNewCity(spokenText);
+    setTimeout(() => {
+      addCity(spokenText);
+    }, 1000);
   };
 
   const removeCity = (cityName) => {
@@ -222,6 +190,15 @@ const MultiCityComparison = () => {
 
   const stats = getComparisonStats();
 
+  // Dynamic grid classes based on number of cities
+  const getGridClasses = () => {
+    if (cities.length === 0) return '';
+    if (cities.length === 1) return 'grid-cols-1 max-w-md mx-auto';
+    if (cities.length === 2) return 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto';
+    if (cities.length === 3) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+    return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
       <div className="bg-gradient-to-br from-blue-100/60 via-white/60 to-purple-100/60 border border-blue-200 rounded-3xl shadow-2xl p-8">
@@ -245,23 +222,15 @@ const MultiCityComparison = () => {
               <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
               
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
-                <button
-                  onClick={handleVoiceSearch}
-                  disabled={isListening || isProcessing}
-                  className={`p-3 rounded-xl transition-all duration-300 ${
-                    isListening || isProcessing
-                      ? 'bg-purple-200 text-purple-600'
-                      : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                  } ${isListening ? 'animate-pulse' : ''} ${isProcessing ? 'animate-spin' : ''}`}
-                  title="Voice search"
-                >
-                  <HiOutlineMicrophone size={20} />
-                </button>
+                <VoiceSearchButton 
+                  onResult={handleVoiceResult}
+                  isMobile={false}
+                />
                 
                 <button
                   onClick={() => addCity()}
                   disabled={loading || !newCity.trim()}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer"
                 >
                   <HiOutlinePlus size={20} />
                   Add
@@ -299,7 +268,7 @@ const MultiCityComparison = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className={`grid gap-6 ${getGridClasses()}`}>
             {cities.map((city, index) => (
               <div
                 key={index}
