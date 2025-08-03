@@ -170,6 +170,58 @@ const MultiCityComparison = () => {
     });
   };
 
+  // Enhanced comparison logic
+  const getComparisonStats = () => {
+    if (cities.length < 2) return null;
+
+    const temperatures = cities.map(c => c.temperature);
+    const humidities = cities.map(c => c.humidity);
+    const windSpeeds = cities.map(c => c.wind_speed);
+
+    const maxTemp = Math.max(...temperatures);
+    const minTemp = Math.min(...temperatures);
+    const avgTemp = temperatures.reduce((sum, temp) => sum + temp, 0) / temperatures.length;
+    const maxHumidity = Math.max(...humidities);
+    const minHumidity = Math.min(...humidities);
+    const avgHumidity = humidities.reduce((sum, hum) => sum + hum, 0) / humidities.length;
+    const maxWind = Math.max(...windSpeeds);
+    const avgWind = windSpeeds.reduce((sum, wind) => sum + wind, 0) / windSpeeds.length;
+
+    // Handle same temperatures
+    const hottestCities = cities.filter(c => c.temperature === maxTemp);
+    const coldestCities = cities.filter(c => c.temperature === minTemp);
+    const mostHumidCities = cities.filter(c => c.humidity === maxHumidity);
+    const leastHumidCities = cities.filter(c => c.humidity === minHumidity);
+    const windiestCities = cities.filter(c => c.wind_speed === maxWind);
+
+    return {
+      hottest: {
+        temp: Math.round(maxTemp),
+        cities: hottestCities.map(c => c.city)
+      },
+      coldest: {
+        temp: Math.round(minTemp),
+        cities: coldestCities.map(c => c.city)
+      },
+      average: {
+        temp: Math.round(avgTemp),
+        humidity: Math.round(avgHumidity),
+        wind: Math.round(avgWind * 10) / 10
+      },
+      humidity: {
+        max: Math.round(maxHumidity),
+        min: Math.round(minHumidity),
+        cities: mostHumidCities.map(c => c.city)
+      },
+      wind: {
+        max: Math.round(maxWind * 10) / 10,
+        cities: windiestCities.map(c => c.city)
+      }
+    };
+  };
+
+  const stats = getComparisonStats();
+
   return (
     <div className="w-full max-w-7xl mx-auto p-6">
       <div className="bg-gradient-to-br from-blue-100/60 via-white/60 to-purple-100/60 border border-blue-200 rounded-3xl shadow-2xl p-8">
@@ -343,47 +395,65 @@ const MultiCityComparison = () => {
         )}
 
         {/* Enhanced Summary Stats */}
-        {cities.length > 1 && (
+        {stats && (
           <div className="mt-8 bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
               📊 Comparison Summary
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {Math.round(Math.max(...cities.map(c => c.temperature)))}°C
+                  {stats.hottest.temp}°C
                 </div>
                 <p className="text-gray-600 text-sm">Hottest</p>
-                <p className="text-gray-800 font-medium">
-                  {cities.find(c => c.temperature === Math.max(...cities.map(c => c.temperature)))?.city}
+                <p className="text-gray-800 font-medium text-sm">
+                  {stats.hottest.cities.join(', ')}
                 </p>
               </div>
               
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {Math.round(Math.min(...cities.map(c => c.temperature)))}°C
+                  {stats.coldest.temp}°C
                 </div>
                 <p className="text-gray-600 text-sm">Coldest</p>
-                <p className="text-gray-800 font-medium">
-                  {cities.find(c => c.temperature === Math.min(...cities.map(c => c.temperature)))?.city}
+                <p className="text-gray-800 font-medium text-sm">
+                  {stats.coldest.cities.join(', ')}
                 </p>
               </div>
               
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {Math.round(cities.reduce((sum, c) => sum + c.temperature, 0) / cities.length)}°C
+                  {stats.average.temp}°C
                 </div>
-                <p className="text-gray-600 text-sm">Average</p>
-                <p className="text-gray-800 font-medium">{cities.length} cities</p>
+                <p className="text-gray-600 text-sm">Average Temp</p>
+                <p className="text-gray-800 font-medium text-sm">{cities.length} cities</p>
               </div>
 
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {Math.round(Math.max(...cities.map(c => c.humidity)))}%
+                  {stats.humidity.max}%
                 </div>
                 <p className="text-gray-600 text-sm">Highest Humidity</p>
-                <p className="text-gray-800 font-medium">
-                  {cities.find(c => c.humidity === Math.max(...cities.map(c => c.humidity)))?.city}
+                <p className="text-gray-800 font-medium text-sm">
+                  {stats.humidity.cities.join(', ')}
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-cyan-600">
+                  {stats.average.humidity}%
+                </div>
+                <p className="text-gray-600 text-sm">Average Humidity</p>
+                <p className="text-gray-800 font-medium text-sm">{cities.length} cities</p>
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-600">
+                  {stats.wind.max} km/h
+                </div>
+                <p className="text-gray-600 text-sm">Windiest</p>
+                <p className="text-gray-800 font-medium text-sm">
+                  {stats.wind.cities.join(', ')}
                 </p>
               </div>
             </div>
