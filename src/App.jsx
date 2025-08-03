@@ -26,7 +26,7 @@ function App() {
                   className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                     currentView === 'home'
                       ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:cursor-pointer'
                   }`}
                 >
                   🌤️ Weather
@@ -36,7 +36,7 @@ function App() {
                   className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                     currentView === 'comparison'
                       ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:cursor-pointer'
                   }`}
                 >
                   🌍 Compare Cities

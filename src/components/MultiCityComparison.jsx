@@ -269,14 +269,14 @@ const MultiCityComparison = () => {
               </div>
             </div>
 
-            {/* Enhanced Suggestions Dropdown */}
+            {/* Improved Suggestions Dropdown */}
             {suggestions.length > 0 && isFocused && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-lg border border-blue-200 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto">
+              <div className="mt-2 bg-white/95 backdrop-blur-lg border border-blue-200 rounded-2xl shadow-2xl max-h-60 overflow-y-auto">
                 {suggestions.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl"
+                    className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl border-b border-gray-100 last:border-b-0"
                   >
                     <span className="text-lg">{getSuggestionIcon(suggestion)}</span>
                     <span className="text-gray-800 font-medium">{suggestion}</span>
