@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { WeatherProvider } from "./context/weatherContext.jsx";
 import Home from "./pages/Home";
-import MultiCityComparison from "./components/MultiCityComparison";
 import "./index.css";
 import { Toaster } from "react-hot-toast";
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
+import CompareModal from "./components/CompareModal";
 
 function App() {
-  const [currentView, setCurrentView] = useState('home');
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
 
   return (
     <WeatherProvider>
@@ -18,40 +19,22 @@ function App() {
               <span>SkyCast: <span className="font-black">Weather App</span></span>
             </h1>
 
-            {/* Integrated Tab Navigation */}
-            <div className="flex justify-center mb-8">
-              <div className="bg-white/20 backdrop-blur-lg rounded-2xl p-1 shadow-lg">
-                <button
-                  onClick={() => setCurrentView('home')}
-                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                    currentView === 'home'
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:cursor-pointer'
-                  }`}
-                >
-                  🌤️ Weather
-                </button>
-                <button
-                  onClick={() => setCurrentView('comparison')}
-                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                    currentView === 'comparison'
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:cursor-pointer'
-                  }`}
-                >
-                  🌍 Compare Cities
-                </button>
-              </div>
-            </div>
-
-            {/* Content */}
-            {currentView === 'home' ? (
-              <Home />
-            ) : (
-              <MultiCityComparison />
-            )}
+            {/* Main Content */}
+            <Home />
           </div>
         </div>
+
+        {/* Floating Compare Button */}
+        <button
+          onClick={() => setIsCompareOpen(true)}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all"
+          title="Compare Cities"
+        >
+          <HiOutlineSwitchHorizontal size={20} />
+          Compare Cities
+        </button>
+
+        <CompareModal isOpen={isCompareOpen} onClose={() => setIsCompareOpen(false)} />
         
         <Toaster
           position="bottom-right"
