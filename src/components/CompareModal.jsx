@@ -7,21 +7,24 @@ const CompareModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm hover:cursor-pointer" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm hover:cursor-pointer"
+        onClick={onClose}
+      />
 
-      {/* Full-screen container */}
-      <div className="relative h-full w-full flex flex-col">
-        {/* Sticky header */}
-        <div className="sticky top-0 z-[101] flex items-center justify-between px-4 sm:px-6 py-3 bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-sm">
+      {/* Centered glass card */}
+      <div className="relative z-[101] w-[92%] md:w-[85%] lg:w-[75%] max-w-6xl max-h-[86vh] overflow-hidden rounded-3xl border border-white/20 bg-white/80 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+        {/* Card header */}
+        <div className="sticky top-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white/70 backdrop-blur-xl border-b border-white/30">
           <div className="flex items-center gap-2 text-gray-800 font-semibold">
             <HiOutlineSwitchHorizontal />
-            Compare Cities
+            <span>Compare Cities</span>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 shadow-sm hover:shadow transition-all"
+            className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 shadow-sm hover:shadow transition-all"
             aria-label="Close compare"
             title="Close"
           >
@@ -30,10 +33,8 @@ const CompareModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="max-w-6xl mx-auto">
-            <MultiCityComparison />
-          </div>
+        <div className="overflow-y-auto max-h-[calc(86vh-56px)] p-4 sm:p-6">
+          <MultiCityComparison isInModal={true} />
         </div>
       </div>
     </div>,

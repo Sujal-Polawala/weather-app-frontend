@@ -5,7 +5,7 @@ import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
 import toast from 'react-hot-toast';
 
-const MultiCityComparison = () => {
+const MultiCityComparison = ({ isInModal = false }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newCity, setNewCity] = useState('');
@@ -199,12 +199,19 @@ const MultiCityComparison = () => {
     return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
   };
 
+  const containerClass = isInModal ? 'w-full mx-auto p-2 sm:p-4' : 'w-full max-w-7xl mx-auto p-6';
+  const wrapperCardClass = isInModal
+    ? 'bg-white/70 backdrop-blur-lg border border-white/40 rounded-2xl shadow-xl p-6'
+    : 'bg-gradient-to-br from-blue-100/60 via-white/60 to-purple-100/60 border border-blue-200 rounded-3xl shadow-2xl p-8';
+
   return (
-    <div className="w-full max-w-7xl mx-auto p-6">
-      <div className="bg-gradient-to-br from-blue-100/60 via-white/60 to-purple-100/60 border border-blue-200 rounded-3xl shadow-2xl p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          🌍 Multi-City Weather Comparison
-        </h2>
+    <div className={containerClass}>
+      <div className={wrapperCardClass}>
+        {!isInModal && (
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+            🌍 Multi-City Weather Comparison
+          </h2>
+        )}
 
         {/* Enhanced Add City Form */}
         <div className="mb-8" ref={formRef}>
