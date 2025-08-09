@@ -9,7 +9,7 @@ const CompareModal = ({ isOpen, onClose }) => {
   return createPortal(
     <div className="fixed inset-0 z-[100]">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm hover:cursor-pointer" onClick={onClose} />
 
       {/* Full-screen container */}
       <div className="relative h-full w-full flex flex-col">
