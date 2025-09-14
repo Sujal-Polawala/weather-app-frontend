@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineChartBar } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineSwitchHorizontal } from 'react-icons/hi';
 import { fetchWeather, fetchWeatherHistory, saveWeatherHistory } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
@@ -104,13 +104,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         }
       }
       
-      // Auto-start comparison if we now have 2+ cities and we're not already comparing
-      if (cities.length >= 1 && !isComparing) {
-        setIsComparing(true);
-        toast.success(`${weatherData.city} added - Comparison started!`);
-      } else {
-        toast.success(`${weatherData.city} added to comparison`);
-      }
+      toast.success(`${weatherData.city} added to comparison`);
     } catch (error) {
       toast.error('Failed to fetch weather data');
     } finally {
@@ -171,14 +165,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         : existingCity.city;
       const weatherData = await fetchWeather(cityQuery);
       setCities([...cities, weatherData]);
-      
-      // Auto-start comparison if we now have 2+ cities and we're not already comparing
-      if (cities.length >= 1 && !isComparing) {
-        setIsComparing(true);
-        toast.success(`${weatherData.city} added - Comparison started!`);
-      } else {
-        toast.success(`${weatherData.city} added to comparison`);
-      }
+      toast.success(`${weatherData.city} added to comparison`);
     } catch (error) {
       toast.error('Failed to fetch weather data');
     } finally {
@@ -430,7 +417,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                       onClick={startComparison}
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center gap-2 hover:cursor-pointer"
                     >
-                      <HiOutlineChartBar size={20} />
+                      <HiOutlineSwitchHorizontal size={20} />
                       Start Compare
                     </button>
                   )}
