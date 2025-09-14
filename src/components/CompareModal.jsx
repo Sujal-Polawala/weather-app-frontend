@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { HiOutlineX, HiOutlineArrowsExpand } from 'react-icons/hi';
+import { HiOutlineX, HiOutlineChartBar } from 'react-icons/hi';
 import MultiCityComparison from './MultiCityComparison';
 
 const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
@@ -34,48 +34,40 @@ const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
 
   return createPortal(
     <div 
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300 ${
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-200 ${
         isAnimating 
-          ? 'opacity-100 scale-100' 
-          : 'opacity-0 scale-95'
+          ? 'opacity-100' 
+          : 'opacity-0'
       }`}
     >
-      {/* Animated Backdrop */}
+      {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/60 to-purple-900/80 backdrop-blur-md hover:cursor-pointer transition-all duration-500 ${
-          isAnimating ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/60 to-purple-900/80 backdrop-blur-md hover:cursor-pointer"
         onClick={handleBackdropClick}
       />
 
-      {/* Animated Modal Card */}
+      {/* Modal Card */}
       <div 
-        className={`relative z-[101] w-full max-w-7xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/95 via-white/90 to-white/95 backdrop-blur-xl shadow-2xl transition-all duration-500 transform ${
+        className={`relative z-[101] w-full max-w-7xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/95 via-white/90 to-white/95 backdrop-blur-xl shadow-2xl transition-all duration-200 transform ${
           isAnimating 
             ? 'translate-y-0 scale-100 opacity-100' 
-            : 'translate-y-8 scale-95 opacity-0'
+            : 'translate-y-4 scale-95 opacity-0'
         }`}
       >
-        {/* Enhanced Header with Animation */}
+        {/* Header */}
         <div className="sticky top-0 flex items-center justify-between gap-4 px-6 py-4 bg-gradient-to-r from-blue-50/80 via-white/80 to-purple-50/80 backdrop-blur-xl border-b border-white/20">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all duration-500 ${
-              isAnimating ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
-            }`}>
-              <HiOutlineArrowsExpand size={20} />
+            <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
+              <HiOutlineChartBar size={20} />
             </div>
-            <div className={`transition-all duration-500 delay-100 ${
-              isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-            }`}>
+            <div>
               <h2 className="text-xl font-bold text-gray-800">City Comparison</h2>
               <p className="text-sm text-gray-600">Compare weather across multiple cities</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className={`p-3 rounded-xl bg-white/80 hover:bg-white text-gray-600 hover:text-gray-800 shadow-md hover:shadow-lg transition-all duration-300 hover:cursor-pointer border border-white/20 hover:scale-110 active:scale-95 ${
-              isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-            }`}
+            className="p-3 rounded-xl bg-white/80 hover:bg-white text-gray-600 hover:text-gray-800 shadow-md hover:shadow-lg transition-all duration-200 hover:cursor-pointer border border-white/20 hover:scale-105"
             aria-label="Close compare"
             title="Close"
           >
@@ -83,12 +75,8 @@ const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
           </button>
         </div>
 
-        {/* Content area with staggered animation */}
-        <div 
-          className={`overflow-y-auto max-h-[calc(90vh-80px)] transition-all duration-700 delay-200 ${
-            isAnimating ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}
-        >
+        {/* Content area */}
+        <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
           <MultiCityComparison isInModal={true} onCityAdded={onCityAdded} />
         </div>
       </div>

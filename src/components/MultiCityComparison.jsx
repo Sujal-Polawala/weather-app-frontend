@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineSparkles, HiOutlineArrowsExpand } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineChartBar } from 'react-icons/hi';
 import { fetchWeather, fetchWeatherHistory, saveWeatherHistory } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
@@ -104,7 +104,13 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         }
       }
       
-      toast.success(`${weatherData.city} added to comparison`);
+      // Auto-start comparison if we now have 2+ cities and we're not already comparing
+      if (cities.length >= 1 && !isComparing) {
+        setIsComparing(true);
+        toast.success(`${weatherData.city} added - Comparison started!`);
+      } else {
+        toast.success(`${weatherData.city} added to comparison`);
+      }
     } catch (error) {
       toast.error('Failed to fetch weather data');
     } finally {
@@ -165,7 +171,14 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         : existingCity.city;
       const weatherData = await fetchWeather(cityQuery);
       setCities([...cities, weatherData]);
-      toast.success(`${weatherData.city} added to comparison`);
+      
+      // Auto-start comparison if we now have 2+ cities and we're not already comparing
+      if (cities.length >= 1 && !isComparing) {
+        setIsComparing(true);
+        toast.success(`${weatherData.city} added - Comparison started!`);
+      } else {
+        toast.success(`${weatherData.city} added to comparison`);
+      }
     } catch (error) {
       toast.error('Failed to fetch weather data');
     } finally {
@@ -302,24 +315,19 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         )}
 
         {/* Enhanced Add City Form */}
-        <div 
-          className={`mb-8 transition-all duration-700 delay-300 ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}
-          ref={formRef}
-        >
+        <div className="mb-8" ref={formRef}>
           <div className="max-w-2xl mx-auto">
-            <div className="relative group">
+            <div className="relative">
               <input
                 type="text"
                 value={newCity}
                 onChange={(e) => setNewCity(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 placeholder="Enter city name to compare..."
-                className="w-full bg-white/80 backdrop-blur-lg border-2 border-blue-200 text-gray-800 text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-gray-500 outline-none focus:border-blue-400 focus:bg-white/90 transition-all duration-300 group-hover:border-blue-300 group-hover:shadow-lg"
+                className="w-full bg-white/80 backdrop-blur-lg border-2 border-blue-200 text-gray-800 text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-gray-500 outline-none focus:border-blue-400 focus:bg-white/90 transition-all duration-200"
                 onKeyPress={(e) => e.key === 'Enter' && addCity()}
               />
-              <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl transition-all duration-300 group-hover:text-blue-500" />
+              <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
               
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
                 <VoiceSearchButton 
@@ -330,9 +338,9 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                 <button
                   onClick={() => addCity()}
                   disabled={loading || !newCity.trim()}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer"
                 >
-                  <HiOutlinePlus size={20} className="transition-transform duration-300 group-hover:rotate-90" />
+                  <HiOutlinePlus size={20} />
                   Add
                 </button>
               </div>
@@ -345,7 +353,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                   <button
                     key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl border-b border-gray-100 last:border-b-0"
+                    className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl border-b border-gray-100 last:border-b-0 hover:cursor-pointer"
                   >
                     <span className="text-lg">{getSuggestionIcon(suggestion)}</span>
                     <span className="text-gray-800 font-medium">{suggestion}</span>
@@ -358,15 +366,9 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
 
         {/* Existing Cities from Database */}
         {existingCities.length > 0 && (
-          <div 
-            className={`mb-8 transition-all duration-700 delay-500 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}
-          >
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center flex items-center justify-center gap-2">
-              <HiOutlineSparkles className="text-yellow-500 animate-pulse" />
-              Cities from Your History
-              <HiOutlineSparkles className="text-yellow-500 animate-pulse" />
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+              📚 Cities from Your History
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-w-4xl mx-auto">
               {loadingExisting ? (
@@ -382,21 +384,18 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                       key={index}
                       onClick={() => !isAlreadyAdded && addExistingCity(city)}
                       disabled={isAlreadyAdded || loading}
-                      className={`p-3 rounded-xl border-2 transition-all duration-300 text-center hover:scale-105 active:scale-95 ${
+                      className={`p-3 rounded-xl border-2 transition-all duration-200 text-center hover:scale-105 ${
                         isAlreadyAdded
                           ? 'bg-green-100 border-green-300 text-green-700 cursor-not-allowed'
-                          : 'bg-white/80 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:cursor-pointer hover:shadow-lg'
+                          : 'bg-white/80 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:cursor-pointer'
                       }`}
                       title={isAlreadyAdded ? 'Already added' : `Add ${city.city} to comparison`}
-                      style={{
-                        animationDelay: `${index * 50}ms`
-                      }}
                     >
-                      <div className="text-lg mb-1 transition-transform duration-300 hover:scale-110">{getWeatherIcon(city.description || 'clear')}</div>
+                      <div className="text-lg mb-1">{getWeatherIcon(city.description || 'clear')}</div>
                       <div className="text-xs font-medium truncate">{city.city}</div>
                       <div className="text-xs text-gray-500">{Math.round(city.temperature)}°C</div>
                       {isAlreadyAdded && (
-                        <HiOutlineCheck className="mx-auto mt-1 text-green-600 animate-bounce" size={14} />
+                        <HiOutlineCheck className="mx-auto mt-1 text-green-600" size={14} />
                       )}
                     </button>
                   );
@@ -426,14 +425,13 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                   <h3 className="text-lg font-semibold text-gray-700">
                     Selected Cities ({cities.length}/4)
                   </h3>
-                  {cities.length >= 2 && (
+                  {cities.length >= 2 && !isComparing && (
                     <button
                       onClick={startComparison}
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2 hover:cursor-pointer shadow-lg hover:shadow-xl animate-pulse hover:animate-none relative overflow-hidden group"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center gap-2 hover:cursor-pointer"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                      <HiOutlineArrowsExpand size={20} className="transition-transform duration-300 group-hover:rotate-180" />
-                      <span className="relative z-10">Start Compare</span>
+                      <HiOutlineChartBar size={20} />
+                      Start Compare
                     </button>
                   )}
                 </div>
@@ -442,17 +440,13 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                   {cities.map((city, index) => (
                     <div
                       key={index}
-                      className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-in slide-in-from-bottom-4 fade-in"
-                      style={{
-                        animationDelay: `${index * 100}ms`,
-                        animationFillMode: 'both'
-                      }}
+                      className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <div className="text-2xl transition-transform duration-300 hover:scale-110 hover:rotate-12">{getWeatherIcon(city.description)}</div>
+                        <div className="text-2xl">{getWeatherIcon(city.description)}</div>
                         <button
                           onClick={() => removeCity(city.city)}
-                          className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300 hover:scale-110 active:scale-95"
+                          className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-200 hover:scale-110"
                           title="Remove city"
                         >
                           <HiOutlineX size={14} />
@@ -460,7 +454,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                       </div>
                       <h4 className="font-semibold text-gray-800 text-sm truncate">{city.city}</h4>
                       <p className="text-gray-600 text-xs">{city.country}</p>
-                      <div className={`text-lg font-bold ${getTemperatureColor(city.temperature)} mt-1 transition-all duration-300 hover:scale-110`}>
+                      <div className={`text-lg font-bold ${getTemperatureColor(city.temperature)} mt-1`}>
                         {Math.round(city.temperature)}°C
                       </div>
                     </div>
@@ -527,7 +521,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                           </button>
                           <button
                             onClick={() => removeCity(city.city)}
-                            className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
+                            className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300 hover:cursor-pointer"
                             title="Remove city"
                           >
                             <HiOutlineX size={16} />
