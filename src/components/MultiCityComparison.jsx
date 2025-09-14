@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineSparkles } from 'react-icons/hi';
 import { fetchWeather, fetchWeatherHistory, saveWeatherHistory } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
@@ -13,6 +13,8 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [existingCities, setExistingCities] = useState([]);
   const [loadingExisting, setLoadingExisting] = useState(false);
+  const [isComparing, setIsComparing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const formRef = useRef(null);
 
   // Fetch existing cities from database
@@ -22,6 +24,8 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
       try {
         const history = await fetchWeatherHistory();
         setExistingCities(history || []);
+        // Trigger loaded animation after a short delay
+        setTimeout(() => setIsLoaded(true), 100);
       } catch (error) {
         console.error('Failed to load existing cities:', error);
       } finally {
@@ -62,6 +66,11 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
     const cityToAdd = cityName || newCity;
     if (!cityToAdd.trim()) {
       toast.error('Please enter a city name');
+      return;
+    }
+
+    if (cities.length >= 4) {
+      toast.error('Maximum 4 cities allowed for comparison');
       return;
     }
 
@@ -120,10 +129,29 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
 
   const removeCity = (cityName) => {
     setCities(cities.filter(city => city.city !== cityName));
+    setIsComparing(false); // Reset comparison when removing cities
     toast.success(`${cityName} removed from comparison`);
   };
 
+  const startComparison = () => {
+    if (cities.length < 2) {
+      toast.error('Please add at least 2 cities to compare');
+      return;
+    }
+    setIsComparing(true);
+    toast.success(`Comparing ${cities.length} cities`);
+  };
+
+  const resetComparison = () => {
+    setIsComparing(false);
+  };
+
   const addExistingCity = async (existingCity) => {
+    if (cities.length >= 4) {
+      toast.error('Maximum 4 cities allowed for comparison');
+      return;
+    }
+
     if (cities.some(city => city.city.toLowerCase() === existingCity.city.toLowerCase())) {
       toast.error('City already added to comparison');
       return;
@@ -274,19 +302,24 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
         )}
 
         {/* Enhanced Add City Form */}
-        <div className="mb-8" ref={formRef}>
+        <div 
+          className={`mb-8 transition-all duration-700 delay-300 ${
+            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+          }`}
+          ref={formRef}
+        >
           <div className="max-w-2xl mx-auto">
-            <div className="relative">
+            <div className="relative group">
               <input
                 type="text"
                 value={newCity}
                 onChange={(e) => setNewCity(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 placeholder="Enter city name to compare..."
-                className="w-full bg-white/80 backdrop-blur-lg border-2 border-blue-200 text-gray-800 text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-gray-500 outline-none focus:border-blue-400 focus:bg-white/90 transition-all duration-300"
+                className="w-full bg-white/80 backdrop-blur-lg border-2 border-blue-200 text-gray-800 text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-gray-500 outline-none focus:border-blue-400 focus:bg-white/90 transition-all duration-300 group-hover:border-blue-300 group-hover:shadow-lg"
                 onKeyPress={(e) => e.key === 'Enter' && addCity()}
               />
-              <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+              <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl transition-all duration-300 group-hover:text-blue-500" />
               
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
                 <VoiceSearchButton 
@@ -297,9 +330,9 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                 <button
                   onClick={() => addCity()}
                   disabled={loading || !newCity.trim()}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer shadow-lg hover:shadow-xl"
                 >
-                  <HiOutlinePlus size={20} />
+                  <HiOutlinePlus size={20} className="transition-transform duration-300 group-hover:rotate-90" />
                   Add
                 </button>
               </div>
@@ -325,13 +358,22 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
 
         {/* Existing Cities from Database */}
         {existingCities.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-              📚 Cities from Your History
+          <div 
+            className={`mb-8 transition-all duration-700 delay-500 ${
+              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}
+          >
+            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center flex items-center justify-center gap-2">
+              <HiOutlineSparkles className="text-yellow-500 animate-pulse" />
+              Cities from Your History
+              <HiOutlineSparkles className="text-yellow-500 animate-pulse" />
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-w-4xl mx-auto">
               {loadingExisting ? (
-                <div className="col-span-full text-center text-gray-500">Loading cities...</div>
+                <div className="col-span-full text-center text-gray-500 flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                  Loading cities...
+                </div>
               ) : (
                 existingCities.map((city, index) => {
                   const isAlreadyAdded = cities.some(c => c.city.toLowerCase() === city.city.toLowerCase());
@@ -340,18 +382,21 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                       key={index}
                       onClick={() => !isAlreadyAdded && addExistingCity(city)}
                       disabled={isAlreadyAdded || loading}
-                      className={`p-3 rounded-xl border-2 transition-all duration-300 text-center ${
+                      className={`p-3 rounded-xl border-2 transition-all duration-300 text-center hover:scale-105 active:scale-95 ${
                         isAlreadyAdded
                           ? 'bg-green-100 border-green-300 text-green-700 cursor-not-allowed'
-                          : 'bg-white/80 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:cursor-pointer'
+                          : 'bg-white/80 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:cursor-pointer hover:shadow-lg'
                       }`}
                       title={isAlreadyAdded ? 'Already added' : `Add ${city.city} to comparison`}
+                      style={{
+                        animationDelay: `${index * 50}ms`
+                      }}
                     >
-                      <div className="text-lg mb-1">{getWeatherIcon(city.description || 'clear')}</div>
+                      <div className="text-lg mb-1 transition-transform duration-300 hover:scale-110">{getWeatherIcon(city.description || 'clear')}</div>
                       <div className="text-xs font-medium truncate">{city.city}</div>
                       <div className="text-xs text-gray-500">{Math.round(city.temperature)}°C</div>
                       {isAlreadyAdded && (
-                        <HiOutlineCheck className="mx-auto mt-1 text-green-600" size={14} />
+                        <HiOutlineCheck className="mx-auto mt-1 text-green-600 animate-bounce" size={14} />
                       )}
                     </button>
                   );
@@ -361,7 +406,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
           </div>
         )}
 
-        {/* Cities Grid */}
+        {/* Cities Selection/Comparison */}
         {cities.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🌍</div>
@@ -369,107 +414,192 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
               No cities added yet
             </h3>
             <p className="text-gray-500">
-              Add cities above to start comparing weather data
+              Add at least 2 cities above to start comparing weather data
             </p>
           </div>
         ) : (
-          <div className={`grid gap-6 ${getGridClasses()}`}>
-            {cities.map((city, index) => (
-              <div
-                key={index}
-                className="bg-white/90 backdrop-blur-lg border border-blue-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                {/* Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">
-                      {city.city}
-                    </h3>
-                    {city.country && (
-                      <p className="text-gray-600 text-sm">{city.country}</p>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
+          <>
+            {/* Selection Mode - Show selected cities */}
+            {!isComparing && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Selected Cities ({cities.length}/4)
+                  </h3>
+                  {cities.length >= 2 && (
                     <button
-                      onClick={() => refreshCity(city.city)}
-                      disabled={loading}
-                      className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-300 disabled:opacity-50"
-                      title="Refresh weather"
+                      onClick={startComparison}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2 hover:cursor-pointer shadow-lg hover:shadow-xl animate-pulse hover:animate-none relative overflow-hidden group"
                     >
-                      <HiOutlineRefresh size={16} className={loading ? 'animate-spin' : ''} />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                      <HiOutlineSwitchHorizontal size={20} className="transition-transform duration-300 group-hover:rotate-180" />
+                      <span className="relative z-10">Start Compare</span>
                     </button>
-                    <button
-                      onClick={() => removeCity(city.city)}
-                      className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
-                      title="Remove city"
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {cities.map((city, index) => (
+                    <div
+                      key={index}
+                      className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-in slide-in-from-bottom-4 fade-in"
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                        animationFillMode: 'both'
+                      }}
                     >
-                      <HiOutlineX size={16} />
-                    </button>
-                  </div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-2xl transition-transform duration-300 hover:scale-110 hover:rotate-12">{getWeatherIcon(city.description)}</div>
+                        <button
+                          onClick={() => removeCity(city.city)}
+                          className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300 hover:scale-110 active:scale-95"
+                          title="Remove city"
+                        >
+                          <HiOutlineX size={14} />
+                        </button>
+                      </div>
+                      <h4 className="font-semibold text-gray-800 text-sm truncate">{city.city}</h4>
+                      <p className="text-gray-600 text-xs">{city.country}</p>
+                      <div className={`text-lg font-bold ${getTemperatureColor(city.temperature)} mt-1 transition-all duration-300 hover:scale-110`}>
+                        {Math.round(city.temperature)}°C
+                      </div>
+                    </div>
+                  ))}
                 </div>
-
-                {/* Weather Icon and Temperature */}
-                <div className="text-center mb-4">
-                  <div className="text-4xl mb-2">{getWeatherIcon(city.description)}</div>
-                  <div className={`text-3xl font-bold ${getTemperatureColor(city.temperature)}`}>
-                    {Math.round(city.temperature)}°C
+                
+                {cities.length < 2 && (
+                  <div className="text-center mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+                    <p className="text-yellow-700 text-sm">
+                      Add {2 - cities.length} more cit{cities.length === 0 ? 'ies' : 'y'} to start comparison
+                    </p>
                   </div>
-                  <p className="text-gray-600 text-sm mt-1">{city.description}</p>
+                )}
+                
+                {cities.length >= 4 && (
+                  <div className="text-center mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                    <p className="text-blue-700 text-sm">
+                      Maximum 4 cities reached. Remove a city to add another.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Comparison Mode - Show detailed comparison */}
+            {isComparing && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-700">
+                    Weather Comparison ({cities.length} cities)
+                  </h3>
+                  <button
+                    onClick={resetComparison}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:cursor-pointer"
+                  >
+                    Back to Selection
+                  </button>
                 </div>
-
-                {/* Enhanced Weather Details */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">Feels like</span>
-                    <span className="font-semibold text-gray-800">
-                      {Math.round(city.feels_like)}°C
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">Humidity</span>
-                    <span className="font-semibold text-gray-800">{city.humidity}%</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">Wind Speed</span>
-                    <span className="font-semibold text-gray-800">{city.wind_speed} km/h</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">Min/Max</span>
-                    <span className="font-semibold text-gray-800">
-                      {Math.round(city.temp_min)}° / {Math.round(city.temp_max)}°
-                    </span>
-                  </div>
-
-                  {/* Sun Timings */}
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="flex justify-between items-center text-xs">
-                      <div className="text-center">
-                        <div className="text-yellow-500">🌅</div>
-                        <div className="text-gray-600">Sunrise</div>
-                        <div className="font-semibold text-gray-800">
-                          {formatTime(city.sunrise)}
+                
+                <div className={`grid gap-6 ${getGridClasses()}`}>
+                  {cities.map((city, index) => (
+                    <div
+                      key={index}
+                      className="bg-white/90 backdrop-blur-lg border border-blue-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      {/* Header */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-800">
+                            {city.city}
+                          </h3>
+                          {city.country && (
+                            <p className="text-gray-600 text-sm">{city.country}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => refreshCity(city.city)}
+                            disabled={loading}
+                            className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-300 disabled:opacity-50"
+                            title="Refresh weather"
+                          >
+                            <HiOutlineRefresh size={16} className={loading ? 'animate-spin' : ''} />
+                          </button>
+                          <button
+                            onClick={() => removeCity(city.city)}
+                            className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
+                            title="Remove city"
+                          >
+                            <HiOutlineX size={16} />
+                          </button>
                         </div>
                       </div>
-                      <div className="text-center">
-                        <div className="text-purple-500">🌇</div>
-                        <div className="text-gray-600">Sunset</div>
-                        <div className="font-semibold text-gray-800">
-                          {formatTime(city.sunset)}
+
+                      {/* Weather Icon and Temperature */}
+                      <div className="text-center mb-4">
+                        <div className="text-4xl mb-2">{getWeatherIcon(city.description)}</div>
+                        <div className={`text-3xl font-bold ${getTemperatureColor(city.temperature)}`}>
+                          {Math.round(city.temperature)}°C
+                        </div>
+                        <p className="text-gray-600 text-sm mt-1">{city.description}</p>
+                      </div>
+
+                      {/* Enhanced Weather Details */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-sm">Feels like</span>
+                          <span className="font-semibold text-gray-800">
+                            {Math.round(city.feels_like)}°C
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-sm">Humidity</span>
+                          <span className="font-semibold text-gray-800">{city.humidity}%</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-sm">Wind Speed</span>
+                          <span className="font-semibold text-gray-800">{city.wind_speed} km/h</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-sm">Min/Max</span>
+                          <span className="font-semibold text-gray-800">
+                            {Math.round(city.temp_min)}° / {Math.round(city.temp_max)}°
+                          </span>
+                        </div>
+
+                        {/* Sun Timings */}
+                        <div className="pt-3 border-t border-gray-200">
+                          <div className="flex justify-between items-center text-xs">
+                            <div className="text-center">
+                              <div className="text-yellow-500">🌅</div>
+                              <div className="text-gray-600">Sunrise</div>
+                              <div className="font-semibold text-gray-800">
+                                {formatTime(city.sunrise)}
+                              </div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-purple-500">🌇</div>
+                              <div className="text-gray-600">Sunset</div>
+                              <div className="font-semibold text-gray-800">
+                                {formatTime(city.sunset)}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
-        {/* Enhanced Summary Stats */}
-        {stats && (
+        {/* Enhanced Summary Stats - Only show in comparison mode */}
+        {stats && isComparing && (
           <div className="mt-8 bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
               📊 Comparison Summary

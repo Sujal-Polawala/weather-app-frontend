@@ -1,39 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { HiOutlineX, HiOutlineSwitchHorizontal } from 'react-icons/hi';
 import MultiCityComparison from './MultiCityComparison';
 
 const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
-  if (!isOpen) return null;
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+      setIsAnimating(true);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      setIsAnimating(false);
+      setTimeout(() => setIsVisible(false), 300);
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isVisible) return null;
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      {/* Backdrop */}
+    <div 
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300 ${
+        isAnimating 
+          ? 'opacity-100 scale-100' 
+          : 'opacity-0 scale-95'
+      }`}
+    >
+      {/* Animated Backdrop */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm hover:cursor-pointer"
-        onClick={onClose}
+        className={`absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/60 to-purple-900/80 backdrop-blur-md hover:cursor-pointer transition-all duration-500 ${
+          isAnimating ? 'opacity-100' : 'opacity-0'
+        }`}
+        onClick={handleBackdropClick}
       />
 
-      {/* Centered glass card */}
-      <div className="relative z-[101] w-[92%] md:w-[85%] lg:w-[75%] max-w-6xl max-h-[86vh] overflow-hidden rounded-3xl border border-white/20 bg-white/80 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
-        {/* Card header */}
-        <div className="sticky top-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white/70 backdrop-blur-xl border-b border-white/30">
-          <div className="flex items-center gap-2 text-gray-800 font-semibold">
-            <HiOutlineSwitchHorizontal />
-            <span>Compare Cities</span>
+      {/* Animated Modal Card */}
+      <div 
+        className={`relative z-[101] w-full max-w-7xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/95 via-white/90 to-white/95 backdrop-blur-xl shadow-2xl transition-all duration-500 transform ${
+          isAnimating 
+            ? 'translate-y-0 scale-100 opacity-100' 
+            : 'translate-y-8 scale-95 opacity-0'
+        }`}
+      >
+        {/* Enhanced Header with Animation */}
+        <div className="sticky top-0 flex items-center justify-between gap-4 px-6 py-4 bg-gradient-to-r from-blue-50/80 via-white/80 to-purple-50/80 backdrop-blur-xl border-b border-white/20">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all duration-500 ${
+              isAnimating ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
+            }`}>
+              <HiOutlineSwitchHorizontal size={20} />
+            </div>
+            <div className={`transition-all duration-500 delay-100 ${
+              isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+            }`}>
+              <h2 className="text-xl font-bold text-gray-800">City Comparison</h2>
+              <p className="text-sm text-gray-600">Compare weather across multiple cities</p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 shadow-sm hover:shadow transition-all hover:cursor-pointer"
+            className={`p-3 rounded-xl bg-white/80 hover:bg-white text-gray-600 hover:text-gray-800 shadow-md hover:shadow-lg transition-all duration-300 hover:cursor-pointer border border-white/20 hover:scale-110 active:scale-95 ${
+              isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+            }`}
             aria-label="Close compare"
             title="Close"
           >
-            <HiOutlineX size={18} />
+            <HiOutlineX size={20} />
           </button>
         </div>
 
-        {/* Content area */}
-        <div className="overflow-y-auto max-h-[calc(86vh-56px)] p-4 sm:p-6">
+        {/* Content area with staggered animation */}
+        <div 
+          className={`overflow-y-auto max-h-[calc(90vh-80px)] transition-all duration-700 delay-200 ${
+            isAnimating ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+          }`}
+        >
           <MultiCityComparison isInModal={true} onCityAdded={onCityAdded} />
         </div>
       </div>
