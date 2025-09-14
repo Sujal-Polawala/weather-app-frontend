@@ -16,7 +16,7 @@ export const getCitySuggestions = async (query) => {
   });
 
   const results = res.data.results || [];
-  console.log(results)
+  // console.log(results)
 
   return results
     .filter((r) => {
