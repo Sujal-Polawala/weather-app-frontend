@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { HiOutlineX, HiOutlineSwitchHorizontal } from 'react-icons/hi';
+import { HiOutlineX, HiOutlineArrowsExpand } from 'react-icons/hi';
 import MultiCityComparison from './MultiCityComparison';
 
 const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
@@ -62,7 +62,7 @@ const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
             <div className={`p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all duration-500 ${
               isAnimating ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
             }`}>
-              <HiOutlineSwitchHorizontal size={20} />
+              <HiOutlineArrowsExpand size={20} />
             </div>
             <div className={`transition-all duration-500 delay-100 ${
               isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'

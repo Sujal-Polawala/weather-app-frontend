@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineSparkles } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck, HiOutlineSparkles, HiOutlineArrowsExpand } from 'react-icons/hi';
 import { fetchWeather, fetchWeatherHistory, saveWeatherHistory } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
@@ -432,7 +432,7 @@ const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2 hover:cursor-pointer shadow-lg hover:shadow-xl animate-pulse hover:animate-none relative overflow-hidden group"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                      <HiOutlineSwitchHorizontal size={20} className="transition-transform duration-300 group-hover:rotate-180" />
+                      <HiOutlineArrowsExpand size={20} className="transition-transform duration-300 group-hover:rotate-180" />
                       <span className="relative z-10">Start Compare</span>
                     </button>
                   )}

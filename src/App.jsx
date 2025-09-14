@@ -3,7 +3,7 @@ import { WeatherProvider } from "./context/weatherContext.jsx";
 import Home from "./pages/Home";
 import "./index.css";
 import { Toaster } from "react-hot-toast";
-import { HiOutlineSwitchHorizontal } from "react-icons/hi";
+import { HiOutlineArrowsExpand } from "react-icons/hi";
 import CompareModal from "./components/CompareModal";
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
                   className="px-6 py-3 rounded-xl font-medium text-white/90 hover:text-white hover:bg-white/10 transition-all duration-300 hover:cursor-pointer flex items-center gap-2"
                   title="Compare Cities"
                 >
-                  <HiOutlineSwitchHorizontal size={20} />
+                  <HiOutlineArrowsExpand size={20} />
                   Compare Cities
                 </button>
               </div>
