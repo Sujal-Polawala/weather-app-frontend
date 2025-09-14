@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import WeatherForm from "../components/weatherForm.jsx";
 import WeatherDisplay from "../components/WeatherDisplay.jsx";
 import History from "../components/history/History.jsx";
@@ -8,7 +8,7 @@ import HistorySkeleton from "../skeleton/HistorySkeleton.jsx";
 import WeatherTrends from "../stats/WeatherTrends.jsx";
 import { fetchWeather } from "../api/weatherApi.jsx";
 
-const Home = () => {
+const Home = forwardRef((props, ref) => {
   const [weather, setWeather] = useState(null);
   const [fromHistory, setFromHistory] = useState(false);
   const [error, setError] = useState(null);
@@ -17,6 +17,13 @@ const Home = () => {
 
   const { history, setHistory, fetchHistory, loadingHistory } =
     useWeatherHistory();
+
+  // Expose refreshHistory method to parent component
+  useImperativeHandle(ref, () => ({
+    refreshHistory: () => {
+      fetchHistory();
+    }
+  }));
 
   const updateHistoryOrder = (clickedCity) => {
     const reordered = [
@@ -142,6 +149,6 @@ const Home = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Home;

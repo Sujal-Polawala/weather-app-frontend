@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { WeatherProvider } from "./context/weatherContext.jsx";
 import Home from "./pages/Home";
 import "./index.css";
@@ -8,6 +8,7 @@ import CompareModal from "./components/CompareModal";
 
 function App() {
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const homeRef = useRef(null);
 
   return (
     <WeatherProvider>
@@ -34,11 +35,20 @@ function App() {
             </div>
 
             {/* Main Content */}
-            <Home />
+            <Home ref={homeRef} />
           </div>
         </div>
 
-        <CompareModal isOpen={isCompareOpen} onClose={() => setIsCompareOpen(false)} />
+        <CompareModal 
+          isOpen={isCompareOpen} 
+          onClose={() => setIsCompareOpen(false)}
+          onCityAdded={(newCity) => {
+            // Trigger history refresh in Home component
+            if (homeRef.current && homeRef.current.refreshHistory) {
+              homeRef.current.refreshHistory();
+            }
+          }}
+        />
         
         <Toaster
           position="bottom-right"

@@ -1,17 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch } from 'react-icons/hi';
-import { fetchWeather } from '../api/weatherApi';
+import { HiOutlinePlus, HiOutlineX, HiOutlineRefresh, HiOutlineSearch, HiOutlineCheck } from 'react-icons/hi';
+import { fetchWeather, fetchWeatherHistory, saveWeatherHistory } from '../api/weatherApi';
 import { getCitySuggestions } from '../api/locationApi';
 import VoiceSearchButton from './VoiceSearchButton';
 import toast from 'react-hot-toast';
 
-const MultiCityComparison = ({ isInModal = false }) => {
+const MultiCityComparison = ({ isInModal = false, onCityAdded = null }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newCity, setNewCity] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [existingCities, setExistingCities] = useState([]);
+  const [loadingExisting, setLoadingExisting] = useState(false);
   const formRef = useRef(null);
+
+  // Fetch existing cities from database
+  useEffect(() => {
+    const loadExistingCities = async () => {
+      setLoadingExisting(true);
+      try {
+        const history = await fetchWeatherHistory();
+        setExistingCities(history || []);
+      } catch (error) {
+        console.error('Failed to load existing cities:', error);
+      } finally {
+        setLoadingExisting(false);
+      }
+    };
+
+    loadExistingCities();
+  }, []);
 
   // City suggestions effect
   useEffect(() => {
@@ -57,6 +76,25 @@ const MultiCityComparison = ({ isInModal = false }) => {
       setCities([...cities, weatherData]);
       setNewCity('');
       setSuggestions([]);
+      
+      // Save to database if not already there
+      const isAlreadyInDB = existingCities.some(city => 
+        city.city.toLowerCase() === weatherData.city.toLowerCase()
+      );
+      
+      if (!isAlreadyInDB) {
+        try {
+          await saveWeatherHistory(weatherData);
+          setExistingCities([...existingCities, weatherData]);
+          // Notify parent component to refresh history
+          if (onCityAdded) {
+            onCityAdded(weatherData);
+          }
+        } catch (dbError) {
+          console.error('Failed to save to database:', dbError);
+        }
+      }
+      
       toast.success(`${weatherData.city} added to comparison`);
     } catch (error) {
       toast.error('Failed to fetch weather data');
@@ -83,6 +121,28 @@ const MultiCityComparison = ({ isInModal = false }) => {
   const removeCity = (cityName) => {
     setCities(cities.filter(city => city.city !== cityName));
     toast.success(`${cityName} removed from comparison`);
+  };
+
+  const addExistingCity = async (existingCity) => {
+    if (cities.some(city => city.city.toLowerCase() === existingCity.city.toLowerCase())) {
+      toast.error('City already added to comparison');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Fetch fresh weather data for the existing city
+      const cityQuery = existingCity.city && existingCity.country 
+        ? `${existingCity.city},${existingCity.country}` 
+        : existingCity.city;
+      const weatherData = await fetchWeather(cityQuery);
+      setCities([...cities, weatherData]);
+      toast.success(`${weatherData.city} added to comparison`);
+    } catch (error) {
+      toast.error('Failed to fetch weather data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const refreshCity = async (cityName) => {
@@ -262,6 +322,44 @@ const MultiCityComparison = ({ isInModal = false }) => {
             )}
           </div>
         </div>
+
+        {/* Existing Cities from Database */}
+        {existingCities.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+              📚 Cities from Your History
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-w-4xl mx-auto">
+              {loadingExisting ? (
+                <div className="col-span-full text-center text-gray-500">Loading cities...</div>
+              ) : (
+                existingCities.map((city, index) => {
+                  const isAlreadyAdded = cities.some(c => c.city.toLowerCase() === city.city.toLowerCase());
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => !isAlreadyAdded && addExistingCity(city)}
+                      disabled={isAlreadyAdded || loading}
+                      className={`p-3 rounded-xl border-2 transition-all duration-300 text-center ${
+                        isAlreadyAdded
+                          ? 'bg-green-100 border-green-300 text-green-700 cursor-not-allowed'
+                          : 'bg-white/80 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:cursor-pointer'
+                      }`}
+                      title={isAlreadyAdded ? 'Already added' : `Add ${city.city} to comparison`}
+                    >
+                      <div className="text-lg mb-1">{getWeatherIcon(city.description || 'clear')}</div>
+                      <div className="text-xs font-medium truncate">{city.city}</div>
+                      <div className="text-xs text-gray-500">{Math.round(city.temperature)}°C</div>
+                      {isAlreadyAdded && (
+                        <HiOutlineCheck className="mx-auto mt-1 text-green-600" size={14} />
+                      )}
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Cities Grid */}
         {cities.length === 0 ? (

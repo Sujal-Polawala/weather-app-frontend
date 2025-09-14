@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { HiOutlineX, HiOutlineSwitchHorizontal } from 'react-icons/hi';
 import MultiCityComparison from './MultiCityComparison';
 
-const CompareModal = ({ isOpen, onClose }) => {
+const CompareModal = ({ isOpen, onClose, onCityAdded = null }) => {
   if (!isOpen) return null;
 
   return createPortal(
@@ -24,7 +24,7 @@ const CompareModal = ({ isOpen, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 shadow-sm hover:shadow transition-all"
+            className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 shadow-sm hover:shadow transition-all hover:cursor-pointer"
             aria-label="Close compare"
             title="Close"
           >
@@ -34,7 +34,7 @@ const CompareModal = ({ isOpen, onClose }) => {
 
         {/* Content area */}
         <div className="overflow-y-auto max-h-[calc(86vh-56px)] p-4 sm:p-6">
-          <MultiCityComparison isInModal={true} />
+          <MultiCityComparison isInModal={true} onCityAdded={onCityAdded} />
         </div>
       </div>
     </div>,
