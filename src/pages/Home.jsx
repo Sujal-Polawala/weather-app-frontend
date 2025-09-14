@@ -1,6 +1,7 @@
 import { React, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import WeatherForm from "../components/weatherForm.jsx";
 import WeatherDisplay from "../components/WeatherDisplay.jsx";
+import WeatherForecast from "../components/WeatherForecast.jsx";
 import History from "../components/history/History.jsx";
 import useWeatherHistory from "../hook/useWeatherHistory.jsx";
 import WeatherSkeleton from "../skeleton/weatherSkeleton.jsx";
@@ -112,13 +113,20 @@ const Home = forwardRef((props, ref) => {
             <WeatherSkeleton />
           </div>
         ) : weather || error ? (
-          <div className="mb-12">
+          <div className="mb-12 space-y-8">
             <WeatherDisplay
               weather={weather}
               onClose={handleClose}
               fromHistory={fromHistory}
               error={error}
             />
+            {/* 5-Day Forecast */}
+            {weather && !error && (
+              <WeatherForecast 
+                city={weather.city} 
+                country={weather.country} 
+              />
+            )}
           </div>
         ) : null}
 

@@ -72,3 +72,16 @@ export const fetchWeather = async (city) => {
     throw new Error("Failed to fetch weather data");
   }
 };
+
+// Fetch 5-day forecast data for a given city
+export const fetchForecast = async (city) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/forecast/${city}`);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      throw new Error("City not found");
+    }
+    throw new Error("Failed to fetch forecast data");
+  }
+};
