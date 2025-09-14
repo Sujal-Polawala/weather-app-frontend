@@ -47,7 +47,17 @@ const WeatherForecast = ({ city, country }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { weekday: "short" });
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return 'Tomorrow';
+    } else {
+      return date.toLocaleDateString('en-US', { weekday: 'short' });
+    }
   };
 
   if (loading) {
@@ -105,7 +115,7 @@ const WeatherForecast = ({ city, country }) => {
       <div className="mt-4 text-center">
         <button
           onClick={fetchForecastData}
-          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1 mx-auto"
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1 mx-auto hover:cursor-pointer"
         >
           <HiOutlineArrowRight size={14} />
           Refresh Forecast
