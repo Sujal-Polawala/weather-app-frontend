@@ -1,55 +1,47 @@
 import React from "react";
 
 const WeatherSkeleton = () => (
-  <div className="animate-pulse bg-gradient-to-br from-blue-100/70 via-white/70 to-purple-100/70 border border-blue-200 p-6 sm:p-8 rounded-3xl shadow-2xl mt-6 w-full max-w-3xl mx-auto">
-    
-    {/* Header: Icon + Location */}
-    <div className="text-center mb-8">
-      <div className="flex justify-center mb-4">
-        <div className="h-20 w-20 bg-white/40 rounded-full"></div>
-      </div>
-      <div className="h-6 sm:h-7 bg-white/40 rounded w-2/5 mx-auto mb-2"></div>
-      <div className="h-5 bg-white/30 rounded w-1/3 mx-auto"></div>
-    </div>
-
-    {/* Weather Info Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-      {/* Temperature */}
-      <div className="text-center space-y-4">
-        <div className="h-14 sm:h-16 bg-white/40 rounded w-1/2 mx-auto"></div>
-        <div className="h-5 bg-white/30 rounded w-2/3 mx-auto"></div>
-        <div className="h-6 bg-white/30 rounded w-1/2 mx-auto"></div>
-      </div>
-
-      {/* Detail Cards */}
-      <div className="space-y-4">
-        {[1, 2, 3].map((_, i) => (
-          <div key={i} className="bg-white/60 backdrop-blur-lg border border-blue-200 rounded-2xl p-4 shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 bg-white/40 rounded-full"></div>
-                <div className="h-4 bg-white/40 rounded w-28"></div>
-              </div>
-              <div className="space-y-2 text-right">
-                <div className="h-4 bg-white/30 rounded w-16 ml-auto"></div>
-                <div className="h-4 bg-white/30 rounded w-12 ml-auto"></div>
+  <div className="w-full space-y-4">
+    {/* Main Weather Card Skeleton */}
+    <div className="bg-white/80 backdrop-blur-2xl border border-slate-200/60 rounded-3xl shadow-lg overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        {/* Left Side - Gradient Background */}
+        <div className="bg-gradient-to-br from-slate-200 to-slate-300 p-6 sm:p-8 lg:p-10">
+          <div className="space-y-6">
+            <div className="skeleton-shimmer h-8 w-3/4 rounded-lg"></div>
+            <div className="skeleton-shimmer h-4 w-1/2 rounded"></div>
+            <div className="flex items-center gap-4 mt-8">
+              <div className="skeleton-shimmer h-16 w-16 rounded-2xl"></div>
+              <div className="flex-1 space-y-2">
+                <div className="skeleton-shimmer h-5 w-2/3 rounded"></div>
+                <div className="skeleton-shimmer h-4 w-1/2 rounded"></div>
               </div>
             </div>
+            <div className="skeleton-shimmer h-20 w-3/4 rounded-xl mt-6"></div>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
 
-    {/* Sun Timings */}
-    <div className="bg-gradient-to-r from-yellow-200/60 to-orange-200/60 backdrop-blur-lg border border-yellow-200 rounded-2xl p-6 shadow">
-      <div className="grid grid-cols-2 gap-6 text-center">
-        {[1, 2].map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-2">
-            <div className="h-8 w-8 bg-white/40 rounded-full mb-2"></div>
-            <div className="h-4 bg-white/40 rounded w-16"></div>
-            <div className="h-5 bg-white/30 rounded w-20"></div>
+        {/* Right Side - White Background */}
+        <div className="p-6 sm:p-8 lg:p-10 bg-white">
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {[1, 2, 3, 4].map((_, i) => (
+              <div key={i} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                <div className="skeleton-shimmer h-6 w-6 rounded-lg mb-2"></div>
+                <div className="skeleton-shimmer h-3 w-16 rounded mb-2"></div>
+                <div className="skeleton-shimmer h-6 w-12 rounded"></div>
+              </div>
+            ))}
           </div>
-        ))}
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2].map((_, i) => (
+              <div key={i} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                <div className="skeleton-shimmer h-5 w-5 rounded-lg mb-2"></div>
+                <div className="skeleton-shimmer h-3 w-12 rounded mb-2"></div>
+                <div className="skeleton-shimmer h-5 w-16 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -3,33 +3,33 @@ import Select from "react-select";
 import {
   BarChart,
   Bar,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
-  ReferenceLine,
   ResponsiveContainer,
   Area,
   AreaChart,
   ComposedChart,
 } from "recharts";
+import { FaChartLine, FaTemperatureHigh, FaWind } from "react-icons/fa";
 
-// 🔹 Custom Tooltip Component (modern look)
+// Custom Tooltip Component
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const entry = payload[0].payload;
     return (
-      <div className="bg-white/90 p-4 rounded-xl shadow-xl text-base text-gray-800 min-w-[140px] border border-blue-200">
-        <div className="font-bold text-blue-600 mb-1">{entry.city}</div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl">🌡️</span>
-          <span>Temp: <b>{entry.temperature}°C</b></span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">💨</span>
-          <span>Wind: <b>{entry.wind_speed} km/h</b></span>
+      <div className="bg-white/95 backdrop-blur-lg p-3 rounded-xl shadow-lg border border-slate-200 text-sm min-w-[140px]">
+        <div className="font-bold text-slate-900 mb-2">{entry.city}</div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-slate-700">
+            <span>🌡️</span>
+            <span>Temp: <b className="text-slate-900">{entry.temperature}°C</b></span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-700">
+            <span>💨</span>
+            <span>Wind: <b className="text-slate-900">{entry.wind_speed} km/h</b></span>
+          </div>
         </div>
       </div>
     );
@@ -37,86 +37,41 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-// 🔹 Custom Legend to include Avg Temp
-const CustomLegend = ({ payload, avgTemp }) => {
-  return (
-    <ul className="flex flex-wrap space-x-4 text-sm text-gray-700">
-      {payload.map((entry, index) => (
-        <li key={`item-${index}`} className="flex items-center space-x-1">
-          <span
-            className="inline-block w-3 h-3 rounded-full"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span>{entry.value}</span>
-        </li>
-      ))}
-      <li className="flex items-center space-x-1">
-        <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
-        <span className="text-gray-700 text-sm">
-          Avg Temp: {avgTemp}°C
-        </span>
-      </li>
-    </ul>
-  );
-};
-
-const customStyles = {
+const customSelectStyles = {
   control: (provided, state) => ({
     ...provided,
     backgroundColor: "#fff",
-    borderColor: state.isFocused ? "#6366f1" : "#e0e7ef",
-    boxShadow: state.isFocused ? "0 0 0 2px #a5b4fc" : "none",
-    borderRadius: "0.75rem", // rounded-xl
-    minHeight: 44,
-    fontSize: 16,
-    paddingLeft: 4,
-    paddingRight: 4,
-    cursor: "pointer", // Always show pointer
+    borderColor: state.isFocused ? "#475569" : "#e2e8f0",
+    boxShadow: state.isFocused ? "0 0 0 2px #cbd5e1" : "none",
+    borderRadius: "0.75rem",
+    minHeight: 40,
+    fontSize: 14,
+    cursor: "pointer",
     "&:hover": {
-      borderColor: "#6366f1",
-      cursor: "pointer", // Ensure pointer on hover
+      borderColor: "#475569",
     },
   }),
   menu: (provided) => ({
     ...provided,
     borderRadius: "0.75rem",
     backgroundColor: "#fff",
-    boxShadow: "0 8px 32px 0 rgba(80,80,200,0.10)",
-    fontSize: 16,
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+    fontSize: 14,
     zIndex: 50,
-    // Removed maxHeight and overflowY from menu
-  }),
-  menuList: (provided) => ({
-    ...provided,
-    maxHeight: 200,
-    overflowY: "auto",
   }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
-      ? "#6366f1"
+      ? "#475569"
       : state.isFocused
-      ? "#e0e7ff"
+      ? "#f1f5f9"
       : "#fff",
     color: state.isSelected ? "#fff" : "#334155",
-    fontWeight: state.isSelected ? 700 : 500,
+    fontWeight: state.isSelected ? 600 : 500,
     cursor: "pointer",
-    padding: "10px 16px",
+    padding: "8px 16px",
   }),
   singleValue: (provided) => ({
-    ...provided,
-    color: "#334155",
-    fontWeight: 600,
-  }),
-  dropdownIndicator: (provided, state) => ({
-    ...provided,
-    color: state.isFocused ? "#6366f1" : "#64748b",
-    "&:hover": { color: "#6366f1" },
-  }),
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-  input: (provided) => ({
     ...provided,
     color: "#334155",
     fontWeight: 600,
@@ -125,6 +80,16 @@ const customStyles = {
 
 const WeatherTrends = ({ history }) => {
   const [selectedCity, setSelectedCity] = useState("All");
+
+  if (!history || history.length === 0) {
+    return (
+      <div className="bg-white/70 backdrop-blur-2xl border border-slate-200/60 rounded-2xl p-8 text-center">
+        <FaChartLine className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+        <p className="text-slate-500 text-sm">No weather history available</p>
+        <p className="text-slate-400 text-xs mt-1">Search for cities to see trends</p>
+      </div>
+    );
+  }
 
   const cityOptions = Array.from(new Set(history.map((h) => h.city)));
   const cityOptionsList = [
@@ -143,7 +108,6 @@ const WeatherTrends = ({ history }) => {
       temperature: entry.temperature,
       wind_speed: entry.wind_speed || 0,
       label: `${entry.city}`,
-      // icon: entry.icon, // Uncomment if you have weather icon info
     }));
 
   const filteredData =
@@ -154,130 +118,144 @@ const WeatherTrends = ({ history }) => {
   const avgTemp =
     filteredData.length > 0
       ? (
-        filteredData.reduce((sum, d) => sum + d.temperature, 0) /
-        filteredData.length
-      ).toFixed(2)
+          filteredData.reduce((sum, d) => sum + d.temperature, 0) /
+          filteredData.length
+        ).toFixed(1)
       : 0;
 
+  // Calculate trend indicators
+  const getTrendData = () => {
+    if (filteredData.length < 2) return null;
+    
+    const temps = filteredData.map(d => d.temperature);
+    const firstHalf = temps.slice(0, Math.floor(temps.length / 2));
+    const secondHalf = temps.slice(Math.floor(temps.length / 2));
+    
+    const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+    const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+    
+    return {
+      trend: secondAvg > firstAvg ? 'up' : secondAvg < firstAvg ? 'down' : 'stable',
+      change: Math.abs(secondAvg - firstAvg).toFixed(1)
+    };
+  };
+
+  const trendData = getTrendData();
+
   return (
-    <div className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-2xl shadow p-4 sm:p-6 mb-6 w-full max-w-full">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-0">
-        <h2 className="text-xl font-bold mb-2 sm:mb-0">
-          📊 Weather Trends {selectedCity !== "All" && `– ${selectedCity}`}
-        </h2>
-        <div className="w-full max-w-xs sm:w-48 relative z-10 text-sm">
+    <div className="bg-white/70 backdrop-blur-2xl border border-slate-200/60 rounded-2xl shadow-sm p-5 sm:p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 flex items-center gap-2">
+            <FaChartLine className="text-slate-600" />
+            Weather Trends
+            {selectedCity !== "All" && (
+              <span className="text-slate-500 font-normal text-base">– {selectedCity}</span>
+            )}
+          </h2>
+          {trendData && (
+            <p className="text-xs text-slate-500 mt-1">
+              {trendData.trend === 'up' && '📈'} 
+              {trendData.trend === 'down' && '📉'} 
+              {trendData.trend === 'stable' && '➡️'} 
+              {' '}Temperature {trendData.trend === 'up' ? 'increasing' : trendData.trend === 'down' ? 'decreasing' : 'stable'} by {trendData.change}°C
+            </p>
+          )}
+        </div>
+        <div className="w-full sm:w-48">
           <Select
             value={cityOptionsList.find((opt) => opt.value === selectedCity)}
             onChange={(opt) => setSelectedCity(opt.value)}
             options={cityOptionsList}
-            styles={customStyles}
+            styles={customSelectStyles}
             isSearchable
             menuPlacement="auto"
-            menuPosition="absolute"
-            className="w-full text-sm hover:cursor-pointer"
           />
         </div>
       </div>
 
-      {/* 🔹 Responsive scrollable container */}
-      <div className="overflow-x-auto w-full your-chart-container-class">
-        <div className={`${selectedCity === 'All' ? 'min-w-[800px]' : 'min-w-0 w-full'} sm:min-w-full`}>
-          <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={filteredData} margin={{ top: 30, right: 30, left: 0, bottom: 40 }}>
-              <defs>
-                <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
-              <XAxis
-                dataKey="label"
-                stroke="#64748b"
-                interval={0}
-                angle={40}
-                textAnchor="start"
-                height={60}
-                tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
-                tickFormatter={(value) => value.length > 10 ? value.slice(0, 10) + '…' : value}
-              />
-              <YAxis
-                stroke="#64748b"
-                tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                cursor={{ fill: '#e0e7ff', opacity: 0.2 }}
-                position={(point, viewBox) => {
-                  if (!point || !viewBox) return;
-                  const tooltipWidth = 180;
-                  // Get the visible width of the chart container
-                  const container = document.querySelector('.your-chart-container-class');
-                  const visibleWidth = container ? container.offsetWidth : viewBox.width;
-                  // Clamp x so tooltip stays within visible area
-                  let x = point.x;
-                  if (x < 10) x = 10;
-                  if (x + tooltipWidth > visibleWidth) x = visibleWidth - tooltipWidth - 10;
-                  return { x, y: point.y };
-                }}
-                wrapperStyle={{ zIndex: 10000 }}
-              />
-              <Legend
-                content={(props) => (
-                  <CustomLegend {...props} avgTemp={avgTemp} />
-                )}
-              />
-              <ReferenceLine
-                y={parseFloat(avgTemp)}
-                stroke="#22d3ee"
-                strokeDasharray="3 3"
-                label={{
-                  value: `Avg Temp: ${avgTemp}°C`,
-                  position: "top",
-                  fill: "#22d3ee",
-                  fontSize: 13,
-                }}
-              />
-              {/* Temperature as smooth line with area gradient */}
-              <Area
-                type="monotone"
-                dataKey="temperature"
-                name="Temperature (°C)"
-                stroke="#3b82f6"
-                fillOpacity={1}
-                fill="url(#tempGradient)"
-                strokeWidth={3}
-                dot={{ r: 4, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
-                activeDot={{ r: 7 }}
-                isAnimationActive={true}
-                animationDuration={1200}
-                animationEasing="ease-out"
-              />
-              {/* Wind speed as bars */}
-              <Bar
-                dataKey="wind_speed"
-                name="Wind Speed (km/h)"
-                fill="#facc15"
-                barSize={22}
-                radius={[6, 6, 0, 0]}
-                isAnimationActive={true}
-                animationDuration={1200}
-                animationEasing="ease-out"
-              />
-              {/* Optional: Weather icons above each city label (if you have icon info)
-              <XAxis ... tick={({ x, y, payload }) => (
-                <g>
-                  <image x={x-10} y={y-30} width={20} height={20} xlinkHref={getIconUrl(payload.value)} />
-                  <text ...>{payload.value}</text>
-                </g>
-              )} />
-              */}
-            </ComposedChart>
-          </ResponsiveContainer>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <FaTemperatureHigh className="text-orange-500 text-sm" />
+            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Avg Temperature</span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">{avgTemp}°C</div>
+        </div>
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <FaWind className="text-blue-500 text-sm" />
+            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Data Points</span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">{filteredData.length}</div>
+        </div>
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Cities Tracked</span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">{cityOptions.length}</div>
         </div>
       </div>
+
+      {/* Chart */}
+      {filteredData.length > 0 ? (
+        <div className="overflow-x-auto">
+          <div className="min-w-[600px] sm:min-w-0">
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={filteredData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
+                <defs>
+                  <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#475569" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#475569" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis
+                  dataKey="label"
+                  stroke="#64748b"
+                  interval={0}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  tick={{ fontSize: 11, fill: '#64748b' }}
+                  tickFormatter={(value) => value.length > 8 ? value.slice(0, 8) + '…' : value}
+                />
+                <YAxis
+                  stroke="#64748b"
+                  tick={{ fontSize: 11, fill: '#64748b' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="temperature"
+                  name="Temperature (°C)"
+                  stroke="#475569"
+                  fillOpacity={1}
+                  fill="url(#tempGradient)"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#475569', stroke: '#fff', strokeWidth: 1 }}
+                  activeDot={{ r: 5 }}
+                />
+                <Bar
+                  dataKey="wind_speed"
+                  name="Wind Speed (km/h)"
+                  fill="#94a3b8"
+                  barSize={20}
+                  radius={[4, 4, 0, 0]}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-slate-500 text-sm">No data available for selected city</p>
+        </div>
+      )}
     </div>
   );
 };

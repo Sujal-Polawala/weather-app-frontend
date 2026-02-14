@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUmbrella, FaSun, FaSnowflake, FaWind, FaCloud, FaCloudRain, FaSparkles } from "react-icons/fa";
+import { FaUmbrella, FaSun, FaSnowflake, FaWind, FaCloud, FaCloudRain  } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 
 const AIWeatherSuggestion = ({ weather }) => {

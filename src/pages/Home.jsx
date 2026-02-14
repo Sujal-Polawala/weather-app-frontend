@@ -97,9 +97,9 @@ const Home = forwardRef((props, ref) => {
       />
 
       {/* Empty State */}
-      {!loading && !weather && !error && (
+      {/* {!loading && !weather && !error && (
         <EmptyState />
-      )}
+      )} */}
 
       {/* Weather Display */}
       {loading ? (
