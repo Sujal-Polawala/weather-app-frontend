@@ -77,14 +77,16 @@ const WeatherForecast = ({ city, country }) => {
   if (!forecast?.forecasts) return null;
 
   return (
-    <div className="bg-white/80 backdrop-blur-lg border border-blue-200 rounded-2xl p-6 shadow-lg">
+    <div className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-6 sm:p-8 shadow-xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <HiOutlineCalendar className="text-blue-600 text-xl" />
-          <h3 className="text-xl font-bold text-gray-800">5-Day Forecast</h3>
-        </div>
-        <div className="text-sm text-gray-600">
-          {forecast.city}, {forecast.country}
+          <div className="bg-gradient-to-br from-blue-500 to-purple-500 p-2 rounded-xl">
+            <HiOutlineCalendar className="text-white text-xl" />
+          </div>
+          <div>
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-800">5-Day Forecast</h3>
+            <p className="text-xs text-gray-500">{forecast.city}, {forecast.country}</p>
+          </div>
         </div>
       </div>
 
@@ -92,32 +94,34 @@ const WeatherForecast = ({ city, country }) => {
         {forecast.forecasts.map((day, i) => (
           <div
             key={i}
-            className="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-4 hover:shadow-md hover:scale-105 transition"
+            className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-2xl p-4 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
           >
             <div className="text-center">
-              <p className="text-sm font-semibold text-gray-700 mb-1">
+              <p className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
                 {formatDate(day.date)}
               </p>
-              {getWeatherIcon(day.icon)}
-              <p className="text-lg font-bold text-gray-900 mt-2">
-                {day.max_temp}° <span className="text-gray-500">/ {day.min_temp}°</span>
+              <div className="flex justify-center mb-3">
+                {getWeatherIcon(day.icon)}
+              </div>
+              <p className="text-xl font-bold text-gray-900 mb-1">
+                {day.max_temp}° <span className="text-gray-500 text-lg">/ {day.min_temp}°</span>
               </p>
-              <p className="text-xs text-gray-600 capitalize">{day.description}</p>
-              <div className="flex justify-around mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1"><WiHumidity /> {day.humidity}%</span>
-                <span className="flex items-center gap-1"><WiStrongWind /> {day.wind_speed} km/h</span>
+              <p className="text-xs text-gray-600 capitalize mb-3">{day.description}</p>
+              <div className="flex justify-around mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500">
+                <span className="flex items-center gap-1"><WiHumidity className="text-cyan-500" /> {day.humidity}%</span>
+                <span className="flex items-center gap-1"><WiStrongWind className="text-blue-500" /> {day.wind_speed} km/h</span>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center">
         <button
           onClick={fetchForecastData}
-          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1 mx-auto hover:cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 hover:cursor-pointer"
         >
-          <HiOutlineArrowRight size={14} />
+          <HiOutlineArrowRight size={16} />
           Refresh Forecast
         </button>
       </div>

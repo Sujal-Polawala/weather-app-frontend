@@ -7,6 +7,8 @@ import useWeatherHistory from "../hook/useWeatherHistory.jsx";
 import WeatherSkeleton from "../skeleton/weatherSkeleton.jsx";
 import HistorySkeleton from "../skeleton/HistorySkeleton.jsx";
 import WeatherTrends from "../stats/WeatherTrends.jsx";
+import AIWeatherSuggestion from "../components/AIWeatherSuggestion.jsx";
+import EmptyState from "../components/EmptyState.jsx";
 import { fetchWeather } from "../api/weatherApi.jsx";
 
 const Home = forwardRef((props, ref) => {
@@ -83,78 +85,71 @@ const Home = forwardRef((props, ref) => {
   // const { bg, text } = getBackgroundClass(weather);
 
   return (
-    <div className="min-h-screen w-full px-2 py-4 sm:px-4 sm:py-8 md:px-8 md:py-12 lg:px-12 lg:py-16 flex flex-col items-center">
-      <div className="w-full max-w-6xl mx-auto space-y-8 sm:space-y-10 md:space-y-12">
-        {/* Header Section */}
-        {/* <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-            🌤️ Weather App
-          </h1>
-          <p className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto">
-            Get real-time weather information for any city around the world
-          </p>
-        </div> */}
+    <div className="w-full space-y-6 sm:space-y-8">
+      {/* Search Form */}
+      <WeatherForm
+        setWeather={setWeather}
+        setHistory={setHistory}
+        setError={setError}
+        fetchHistory={fetchHistory}
+        setLoading={setLoading}
+        history={history}
+      />
 
-        {/* Search Form */}
-        <div className="mb-12">
-          <WeatherForm
-            setWeather={setWeather}
-            setHistory={setHistory}
-            setError={setError}
-            fetchHistory={fetchHistory}
-            setLoading={setLoading}
-            history={history}
+      {/* Empty State */}
+      {!loading && !weather && !error && (
+        <EmptyState />
+      )}
+
+      {/* Weather Display */}
+      {loading ? (
+        <WeatherSkeleton />
+      ) : weather || error ? (
+        <div className="space-y-6">
+          <WeatherDisplay
+            weather={weather}
+            onClose={handleClose}
+            fromHistory={fromHistory}
+            error={error}
           />
-        </div>
+          
+          {/* AI Weather Suggestions */}
+          {weather && !error && (
+            <AIWeatherSuggestion weather={weather} />
+          )}
 
-        {/* Weather Display */}
-        {loading ? (
-          <div className="mb-12">
-            <WeatherSkeleton />
-          </div>
-        ) : weather || error ? (
-          <div className="mb-12 space-y-8">
-            <WeatherDisplay
-              weather={weather}
-              onClose={handleClose}
-              fromHistory={fromHistory}
-              error={error}
+          {/* 5-Day Forecast */}
+          {weather && !error && (
+            <WeatherForecast 
+              city={weather.city} 
+              country={weather.country} 
             />
-            {/* 5-Day Forecast */}
-            {weather && !error && (
-              <WeatherForecast 
-                city={weather.city} 
-                country={weather.country} 
-              />
-            )}
-          </div>
-        ) : null}
-
-        {/* History Section */}
-        <div className="mb-12">
-          {loadingHistory ? (
-            <HistorySkeleton />
-          ) : (
-            <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
-              <History
-                history={history}
-                setHistory={setHistory}
-                setWeather={setWeather}
-                fetchHistory={fetchHistory}
-                onHistoryItemClick={handleHistoryItemClick}
-                setPendingWeatherCity={setPendingWeatherCity}
-              />
-            </div>
           )}
         </div>
+      ) : null}
 
-        {/* Weather Trends */}
-        {history.length > 0 && (
-          <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
-            <WeatherTrends history={history} />
-          </div>
-        )}
-      </div>
+      {/* History Section */}
+      {loadingHistory ? (
+        <HistorySkeleton />
+      ) : (
+        <div className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-xl p-6 sm:p-8">
+          <History
+            history={history}
+            setHistory={setHistory}
+            setWeather={setWeather}
+            fetchHistory={fetchHistory}
+            onHistoryItemClick={handleHistoryItemClick}
+            setPendingWeatherCity={setPendingWeatherCity}
+          />
+        </div>
+      )}
+
+      {/* Weather Trends */}
+      {history.length > 0 && (
+        <div className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-xl p-6 sm:p-8">
+          <WeatherTrends history={history} />
+        </div>
+      )}
     </div>
   );
 });

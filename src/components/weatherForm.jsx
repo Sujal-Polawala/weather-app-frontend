@@ -77,6 +77,7 @@ const WeatherForm = ({
         wind_speed: rawData.wind_speed,
         wind_deg: rawData.wind_deg,
         humidity: rawData.humidity,
+        pressure: rawData.pressure,
         sunrise: rawData.sunrise,
         sunset: rawData.sunset,
       };
@@ -106,9 +107,15 @@ const WeatherForm = ({
 
       await saveWeatherHistory(newEntry);
       await fetchHistory();
+      toast.success(`Weather for ${data.city}, ${data.country}`, {
+        duration: 3000,
+      });
     } catch (error) {
       setError("City Not Found");
       setWeather(null);
+      toast.error("City not found. Please try a different city name.", {
+        duration: 4000,
+      });
     }
 
     setCity("");
@@ -157,6 +164,7 @@ const WeatherForm = ({
         wind_speed: response.wind_speed,
         wind_deg: response.wind_deg,
         humidity: response.humidity,
+        pressure: response.pressure,
         sunrise: response.sunrise,
         sunset: response.sunset,
       };
@@ -192,7 +200,9 @@ const WeatherForm = ({
       // Set weather with correct fromHistory flag based on whether city exists in history
       setWeather({ ...data, fromHistory: isFromHistory, isCurrentLocation: true });
       
-      toast.success(`Weather for ${data.city}, ${data.country}`);
+      toast.success(`Weather for ${data.city}, ${data.country}`, {
+        duration: 3000,
+      });
       
     } catch (error) {
       console.error("Location error:", error);
@@ -272,24 +282,24 @@ const WeatherForm = ({
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="relative bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl border border-white/20 p-4 sm:p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl w-full"
+        className="relative bg-white/95 backdrop-blur-xl border border-blue-200/50 p-6 sm:p-8 rounded-3xl shadow-xl transition-all duration-500 hover:shadow-2xl w-full"
       >
         {/* Search Input and Location Button Container */}
         <div className="w-full flex flex-col sm:flex-row gap-3 mb-4">
           {/* Input with voice and search button inside */}
           <div className="relative flex-1 flex items-center min-w-0">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <FaMapMarkerAlt size={20} />
             </span>
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              placeholder="Enter City Name"
+              placeholder="Search for a city..."
               onFocus={() => setIsFocused(true)}
               onKeyDown={handleKeyDown}
               onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-              className="w-full min-w-0 bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white text-base sm:text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-white/60 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+              className="w-full min-w-0 bg-gray-50 border-2 border-gray-200 text-gray-800 text-base sm:text-lg p-4 pl-12 pr-32 rounded-2xl placeholder-gray-400 outline-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-200 transition-all duration-300"
             />
             {/* Voice and Search buttons grouped together at right end of input */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
@@ -305,7 +315,7 @@ const WeatherForm = ({
               />
               <button
                 type="submit"
-                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 shadow border border-white/30 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
+                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shadow-md border border-blue-300 hover:scale-110 hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer disabled:opacity-50"
                 style={{ zIndex: 2 }}
                 tabIndex={0}
                 title="Search Weather"
@@ -320,7 +330,7 @@ const WeatherForm = ({
             type="button"
             onClick={getCurrentLocation}
             disabled={isGettingLocation}
-            className="hidden sm:flex w-auto h-auto flex-none bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[56px]"
+            className="hidden sm:flex w-auto h-auto flex-none bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[56px]"
             style={{ minHeight: '56px', height: '100%' }}
             title="Get current location weather"
           >
@@ -333,7 +343,7 @@ const WeatherForm = ({
           <button
             type="submit"
             disabled={isSearching}
-            className="flex-1 bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <HiOutlineSearch size={18} className={`text-white drop-shadow ${isSearching ? 'animate-spin' : ''}`} />
             <span>{isSearching ? "Searching..." : "Search"}</span>
@@ -342,7 +352,7 @@ const WeatherForm = ({
             type="button"
             onClick={getCurrentLocation}
             disabled={isGettingLocation}
-            className="flex-1 bg-gradient-to-r from-green-500/80 to-emerald-500/80 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-lg border border-white/30 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-400/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold text-base py-3 px-4 rounded-2xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400 items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             title="Get current location weather"
           >
             <FaLocationArrow size={18} className={`text-white drop-shadow ${isGettingLocation ? 'animate-spin' : ''}`} />
@@ -352,7 +362,7 @@ const WeatherForm = ({
         {/* Suggestions Dropdown rendered via Portal */}
         <SuggestionsDropdown anchorRef={formRef} visible={isFocused && (suggestions.length > 0 || history.length > 0)}>
           <div
-            className="bg-gradient-to-br from-blue-100/90 via-white/90 to-purple-100/90 border border-blue-200 rounded-3xl shadow-2xl max-h-80 overflow-y-auto p-2 space-y-2 backdrop-blur-xl"
+            className="bg-white border border-gray-200 rounded-2xl shadow-2xl max-h-80 overflow-y-auto p-2 space-y-2 backdrop-blur-xl"
           >
             {/* Suggestions */}
             {suggestions.map((sugg, idx) => {
